@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-import Historia from './historia.jsx'
+import Historia from './Historia.jsx'
 import './historia.css'
 import {
   registrar, login, salvarToken, pegarToken, logout, buscarUsuarioAtual,
