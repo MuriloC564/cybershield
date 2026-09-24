@@ -1,0 +1,3762 @@
+/* ================================================================
+   CYBERSHIELD — MODO HISTÓRIA
+   ================================================================ */
+
+.historia {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 8px 0 40px;
+  text-align: left;
+}
+
+.historia h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.6rem;
+  margin: 0 0 6px;
+  color: #e8edf9;
+}
+
+.historia button,
+.hist-cena button {
+  font-family: 'Inter', sans-serif;
+}
+
+.historia button:focus-visible,
+.hist-cena button:focus-visible {
+  outline: 2px solid #2de2e6;
+  outline-offset: 2px;
+}
+
+
+/* ================================================================
+   SELEÇÃO DE FASE
+   ================================================================ */
+
+.hist-topo-kicker,
+.hist-fim-kicker {
+  display: block;
+  color: #2de2e6;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .2em;
+  margin-bottom: 6px;
+}
+
+.hist-topo p {
+  color: #7c8ba8;
+  font-size: .95rem;
+  max-width: 60ch;
+  margin: 0 0 22px;
+}
+
+.hist-fases {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.hist-fase-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  width: 100%;
+
+  padding: 16px 18px;
+
+  text-align: left;
+
+  color: #e8edf9;
+
+  background: #12182b;
+
+  border:
+    1px solid
+    rgba(45, 226, 230, .2);
+
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  transition:
+    border-color .15s ease,
+    transform .12s ease,
+    background .15s ease;
+}
+
+.hist-fase-card:hover:not(:disabled) {
+  border-color: #2de2e6;
+
+  background: #151d33;
+
+  transform:
+    translateY(-2px);
+}
+
+.hist-fase-card:disabled {
+  opacity: .45;
+  cursor: default;
+}
+
+.hist-fase-icone {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.hist-fase-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.hist-fase-info strong {
+  font-family:
+    'Space Grotesk',
+    sans-serif;
+
+  font-size: 1.05rem;
+}
+
+.hist-fase-info small {
+  color: #2de2e6;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+.hist-fase-info em {
+  color: #7c8ba8;
+  font-size: .88rem;
+  font-style: normal;
+}
+
+
+/* ================================================================
+   TELA DE FIM
+   ================================================================ */
+
+.hist-fim {
+  padding: 28px 24px;
+
+  background: #12182b;
+
+  border:
+    1px solid
+    rgba(45, 226, 230, .25);
+
+  border-radius: 14px;
+}
+
+.hist-fim p {
+  max-width: 55ch;
+  margin: 0 0 18px;
+  color: #7c8ba8;
+}
+
+.hist-fim-acoes {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+
+/* ================================================================
+   BOTÕES
+   ================================================================ */
+
+.hist-voltar {
+  padding: 8px 14px;
+
+  color: #c5cee3;
+
+  background:
+    rgba(10, 14, 26, .72);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, .18);
+
+  border-radius: 8px;
+
+  font-size: .85rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    color .15s ease,
+    border-color .15s ease,
+    background .15s ease;
+}
+
+.hist-voltar:hover {
+  color: #fff;
+
+  border-color:
+    rgba(255, 255, 255, .4);
+
+  background:
+    rgba(18, 24, 43, .92);
+}
+
+.hist-continuar {
+  margin-top: 10px;
+
+  padding: 9px 18px;
+
+  color: #0a0e1a;
+
+  background: #2de2e6;
+
+  border: 0;
+  border-radius: 8px;
+
+  font-size: .88rem;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    transform .12s ease,
+    filter .12s ease;
+}
+
+.hist-continuar:hover {
+  filter: brightness(1.08);
+
+  transform:
+    translateY(-1px);
+}
+
+
+/* ================================================================
+   CENA FULLSCREEN
+   ================================================================ */
+
+.hist-cena {
+  position: fixed;
+  inset: 0;
+
+  z-index: 9999;
+
+  overflow: hidden;
+
+  color: #e8edf9;
+
+  background: #05070d;
+
+  text-align: left;
+
+  isolation: isolate;
+}
+
+
+/* ================================================================
+   FUNDO
+   ================================================================ */
+
+.hist-fundo {
+  position: absolute;
+  inset: 0;
+
+  z-index: 0;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  animation:
+    histFundoEntra
+    .7s
+    ease-out;
+}
+
+.hist-fundo-vazio {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 6px;
+
+  color: #7c8ba8;
+
+  background:
+    radial-gradient(
+      circle at 30% 20%,
+      #16203a,
+      #0a0e1a 70%
+    );
+}
+
+.hist-fundo-vazio small {
+  opacity: .7;
+
+  font-family:
+    'JetBrains Mono',
+    monospace;
+}
+
+.hist-vinheta {
+  position: absolute;
+  inset: 0;
+
+  z-index: 1;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(10, 14, 26, .74),
+      rgba(10, 14, 26, 0) 35%
+    ),
+    linear-gradient(
+      to top,
+      rgba(10, 14, 26, .62),
+      rgba(10, 14, 26, 0) 42%
+    ),
+    radial-gradient(
+      ellipse at center,
+      transparent 48%,
+      rgba(0, 0, 0, .25) 100%
+    );
+}
+
+@keyframes histFundoEntra {
+  from {
+    opacity: 0;
+
+    transform:
+      scale(1.03);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      scale(1);
+  }
+}
+
+
+/* ================================================================
+   HUD
+   ================================================================ */
+
+.hist-hud {
+  position: absolute;
+
+  z-index: 8;
+
+  top:
+    calc(
+      env(safe-area-inset-top, 0px)
+      + 14px
+    );
+
+  left: 4vw;
+  right: 4vw;
+
+  display: grid;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
+  align-items: center;
+
+  gap: 20px;
+
+  pointer-events: none;
+}
+
+.hist-hud > * {
+  pointer-events: auto;
+}
+
+.hist-hud-centro {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 1px;
+
+  text-align: center;
+}
+
+.hist-hud-label {
+  color: #7c8ba8;
+
+  font-family:
+    'JetBrains Mono',
+    monospace;
+
+  font-size: .62rem;
+
+  letter-spacing: .18em;
+}
+
+.hist-hud-local {
+  color: #e8edf9;
+
+  font-family:
+    'Space Grotesk',
+    sans-serif;
+
+  font-size: .78rem;
+
+  font-weight: 700;
+
+  letter-spacing: .12em;
+}
+
+.hist-progresso {
+  justify-self: end;
+
+  display: flex;
+
+  gap: 6px;
+}
+
+.hist-ponto {
+  width: 24px;
+  height: 4px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(255, 255, 255, .22);
+}
+
+.hist-ponto.feito {
+  background:
+    rgba(45, 226, 230, .55);
+}
+
+.hist-ponto.atual {
+  background: #2de2e6;
+
+  box-shadow:
+    0 0 10px
+    rgba(45, 226, 230, .45);
+}
+
+
+/* ================================================================
+   PERSONAGENS
+   ================================================================ */
+
+.hist-sprite {
+  position: absolute;
+
+  bottom: 0;
+
+  z-index: 2;
+
+  height:
+    min(68vh, 760px);
+
+  transition:
+    filter .3s ease,
+    opacity .3s ease;
+}
+
+.hist-sprite-esq {
+  left: 2vw;
+
+  animation:
+    histEntraEsq
+    .5s
+    ease-out
+    both;
+}
+
+.hist-sprite-dir {
+  right: 2vw;
+
+  animation:
+    histEntraDir
+    .5s
+    ease-out
+    both;
+}
+
+.hist-sprite:not(.ativo) {
+  filter:
+    brightness(.55)
+    saturate(.8);
+}
+
+.hist-sprite-img {
+  display: block;
+
+  width: auto;
+  height: 100%;
+
+  max-width: 46vw;
+
+  object-fit: contain;
+
+  object-position:
+    bottom center;
+
+  transform-origin:
+    bottom center;
+
+  user-select: none;
+
+  filter:
+    drop-shadow(
+      0 12px 24px
+      rgba(0, 0, 0, .58)
+    );
+
+  animation:
+    histRespirar
+    3.4s
+    ease-in-out
+    infinite;
+}
+
+.hist-sprite.falando
+.hist-sprite-img {
+  animation:
+    histFalar
+    .34s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+.hist-sprite-vazio {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  gap: 4px;
+
+  width:
+    min(24vw, 300px);
+
+  height: 100%;
+
+  padding-bottom: 20px;
+
+  color:
+    var(--cor-personagem);
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(18, 24, 43, .75),
+      rgba(18, 24, 43, .1)
+    );
+
+  border:
+    2px dashed
+    var(--cor-personagem);
+
+  border-bottom: 0;
+
+  border-radius:
+    16px 16px 0 0;
+}
+
+.hist-sprite-vazio strong {
+  font-family:
+    'Space Grotesk',
+    sans-serif;
+}
+
+.hist-sprite-vazio small {
+  opacity: .75;
+
+  font-family:
+    'JetBrains Mono',
+    monospace;
+
+  font-size: .7rem;
+}
+
+@keyframes histEntraEsq {
+  from {
+    opacity: 0;
+
+    transform:
+      translateX(-32px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateX(0);
+  }
+}
+
+@keyframes histEntraDir {
+  from {
+    opacity: 0;
+
+    transform:
+      translateX(32px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateX(0);
+  }
+}
+
+@keyframes histRespirar {
+  0%,
+  100% {
+    transform:
+      scaleX(
+        var(--espelho, 1)
+      )
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      scaleX(
+        var(--espelho, 1)
+      )
+      translateY(-5px);
+  }
+}
+
+@keyframes histFalar {
+  from {
+    transform:
+      scaleX(
+        var(--espelho, 1)
+      )
+      translateY(0);
+  }
+
+  to {
+    transform:
+      scaleX(
+        var(--espelho, 1)
+      )
+      translateY(-8px)
+      scaleY(1.015);
+  }
+}
+
+
+/* ================================================================
+   BALÕES
+   ================================================================ */
+
+.hist-falas {
+  position: absolute;
+
+  z-index: 5;
+
+  top:
+    calc(
+      env(safe-area-inset-top, 0px)
+      + 70px
+    );
+
+  left: 4vw;
+  right: 4vw;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content:
+    space-between;
+
+  gap: 2vw;
+
+  max-height:
+    calc(100vh - 90px);
+
+  overflow-y: auto;
+
+  pointer-events: none;
+}
+
+.hist-balao {
+  width:
+    min(46vw, 560px);
+
+  padding: 14px 18px;
+
+  color: #e8edf9;
+
+  background:
+    rgba(18, 24, 43, .94);
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 8px 26px
+    rgba(0, 0, 0, .45);
+
+  backdrop-filter:
+    blur(8px);
+
+  cursor: pointer;
+
+  pointer-events: auto;
+}
+
+.hist-balao-esq {
+  order: 1;
+
+  border-left:
+    4px solid
+    var(--cor-personagem);
+}
+
+.hist-balao-dir {
+  order: 2;
+
+  margin-left: auto;
+
+  border-right:
+    4px solid
+    var(--cor-personagem);
+}
+
+.hist-balao-narrador {
+  order: 0;
+
+  flex:
+    1 1 100%;
+
+  width: auto;
+
+  max-width: 780px;
+
+  margin: 0 auto;
+
+  text-align: center;
+
+  background:
+    rgba(10, 14, 26, .84);
+
+  border:
+    1px solid
+    rgba(124, 139, 168, .35);
+}
+
+.hist-balao-nome {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color:
+    var(--cor-personagem);
+
+  font-family:
+    'Space Grotesk',
+    sans-serif;
+
+  font-size: .9rem;
+
+  font-weight: 700;
+}
+
+.hist-balao-texto {
+  max-width: 62ch;
+
+  margin: 0;
+
+  color: #e8edf9;
+
+  font-size: 1.02rem;
+
+  line-height: 1.5;
+}
+
+.hist-balao-narrador
+.hist-balao-texto {
+  margin: 0 auto;
+
+  color: #c5cee3;
+
+  font-style: italic;
+}
+
+
+/* ================================================================
+   ALTERNATIVAS
+   ================================================================ */
+
+.hist-alternativas {
+  display: grid;
+
+  gap: 8px;
+
+  margin-top: 10px;
+}
+
+.hist-alternativa {
+  padding: 12px 14px;
+
+  color: #e8edf9;
+
+  background: #0a0e1a;
+
+  border:
+    1px solid
+    rgba(45, 226, 230, .4);
+
+  border-radius: 10px;
+
+  font-size: .93rem;
+  font-weight: 500;
+
+  line-height: 1.35;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    border-color .15s ease,
+    background .15s ease,
+    transform .12s ease;
+}
+
+.hist-alternativa:hover:not(:disabled) {
+  border-color: #2de2e6;
+
+  background:
+    rgba(45, 226, 230, .1);
+
+  transform:
+    translateX(2px);
+}
+
+.hist-alternativa:disabled {
+  cursor: default;
+}
+
+.hist-alternativa.correta {
+  border-color: #2ed573;
+
+  background:
+    rgba(46, 213, 115, .16);
+}
+
+.hist-alternativa.incorreta {
+  border-color: #ff4757;
+
+  background:
+    rgba(255, 71, 87, .16);
+}
+
+.hist-alternativa.neutra {
+  opacity: .4;
+}
+
+
+/* ================================================================
+   FEEDBACK
+   ================================================================ */
+
+.hist-feedback {
+  margin-top: 12px;
+
+  padding: 12px 14px;
+
+  border-radius: 10px;
+
+  font-size: .9rem;
+
+  cursor: default;
+}
+
+.hist-feedback strong {
+  display: block;
+
+  margin-bottom: 4px;
+
+  font-family:
+    'Space Grotesk',
+    sans-serif;
+}
+
+.hist-feedback p {
+  margin: 0 0 6px;
+
+  color: #e8edf9;
+
+  line-height: 1.5;
+}
+
+.hist-feedback small {
+  display: block;
+
+  opacity: .85;
+}
+
+.hist-feedback.certo {
+  background:
+    rgba(46, 213, 115, .1);
+
+  border:
+    1px solid
+    rgba(46, 213, 115, .3);
+}
+
+.hist-feedback.certo strong,
+.hist-feedback.certo small {
+  color: #2ed573;
+}
+
+.hist-feedback.errado {
+  background:
+    rgba(255, 71, 87, .1);
+
+  border:
+    1px solid
+    rgba(255, 71, 87, .3);
+}
+
+.hist-feedback.errado strong {
+  color: #ff4757;
+}
+
+
+/* ================================================================
+   CELULAR
+   ================================================================ */
+
+.hist-celular {
+  position: absolute;
+
+  z-index: 4;
+
+  left: 50%;
+  bottom: 5vh;
+
+  width:
+    min(230px, 26vw);
+
+  height:
+    min(46vh, 420px);
+
+  padding: 10px;
+
+  background: #111827;
+
+  border:
+    3px solid #05070d;
+
+  border-radius: 24px;
+
+  box-shadow:
+    0 16px 40px
+    rgba(0, 0, 0, .68),
+
+    0 0 0 1px
+    rgba(45, 226, 230, .25),
+
+    0 0 32px
+    rgba(45, 226, 230, .1);
+
+  transform:
+    translateX(-50%);
+
+  animation:
+    histCelularEntra
+    .45s
+    ease-out
+    both;
+}
+
+.hist-celular-tela {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+  height: 100%;
+
+  padding: 12px;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      160deg,
+      #111a2e,
+      #090d17
+    );
+
+  border-radius: 15px;
+}
+
+.hist-celular-topo {
+  display: flex;
+
+  justify-content:
+    space-between;
+
+  color: #7c8ba8;
+
+  font-family:
+    'JetBrains Mono',
+    monospace;
+
+  font-size: .56rem;
+}
+
+.hist-celular-de {
+  margin-top: 10px;
+
+  color: #7c8ba8;
+
+  font-family:
+    'JetBrains Mono',
+    monospace;
+
+  font-size: .68rem;
+}
+
+.hist-celular-msg {
+  margin: 0;
+
+  padding: 9px 10px;
+
+  color: #e8edf9;
+
+  background: #1c2740;
+
+  border-radius:
+    10px 10px 10px 2px;
+
+  font-size: .8rem;
+
+  line-height: 1.4;
+
+  word-break: break-word;
+}
+
+@keyframes histCelularEntra {
+  from {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateX(-50%)
+      translateY(0);
+  }
+}
+
+
+/* ================================================================
+   INTRO MP4
+   ================================================================ */
+
+.hist-intro {
+  position: absolute;
+  inset: 0;
+
+  z-index: 50;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  overflow: hidden;
+
+  background: #000;
+
+  opacity: 1;
+
+  transition:
+    opacity .3s ease;
+}
+
+.hist-intro.saindo {
+  opacity: 0;
+}
+
+.hist-intro-video {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.hist-intro-vinheta {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 55%,
+      rgba(0, 0, 0, .42)
+      100%
+    );
+}
+
+.hist-intro-pular {
+  position: absolute;
+
+  z-index: 3;
+
+  right: 4vw;
+
+  bottom:
+    calc(
+      env(
+        safe-area-inset-bottom,
+        0px
+      )
+      + 22px
+    );
+
+  padding: 8px 14px;
+
+  color: #e8edf9;
+
+  background:
+    rgba(10, 14, 26, .78);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, .25);
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  backdrop-filter:
+    blur(8px);
+}
+
+
+/* ================================================================
+   CINEMÁTICAS ESTÁTICAS / LOADING SCREEN VIVO
+   ================================================================ */
+
+.hist-cinematica {
+  position: absolute;
+  inset: 0;
+
+  z-index: 50;
+
+  overflow: hidden;
+
+  background: #000;
+
+  opacity: 1;
+
+  transition:
+    opacity .35s ease;
+}
+
+.hist-cinematica.saindo {
+  opacity: 0;
+}
+
+.hist-cinematica-camera {
+  position: absolute;
+
+  inset: -3%;
+
+  overflow: hidden;
+
+  will-change: transform;
+}
+
+.hist-cinematica-img {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  transform-origin:
+    center center;
+
+  user-select: none;
+
+  pointer-events: none;
+
+  will-change: transform;
+}
+
+
+/* ================================================================
+   EFEITO DE CAMINHADA
+   ================================================================ */
+
+.hist-cinematica-caminhada
+.hist-cinematica-camera {
+  animation:
+    histCameraPassos
+    1.05s
+    ease-in-out
+    infinite;
+}
+
+.hist-cinematica-caminhada
+.hist-cinematica-img {
+  animation:
+    histAproximarCaminhada
+    var(--duracao-cinematica)
+    linear
+    forwards;
+}
+
+@keyframes histAproximarCaminhada {
+  0% {
+    transform:
+      scale(1.02);
+  }
+
+  100% {
+    transform:
+      scale(1.12);
+  }
+}
+
+@keyframes histCameraPassos {
+  0% {
+    transform:
+      translate3d(
+        0,
+        0,
+        0
+      )
+      rotate(0deg);
+  }
+
+  25% {
+    transform:
+      translate3d(
+        -2px,
+        -3px,
+        0
+      )
+      rotate(-.08deg);
+  }
+
+  50% {
+    transform:
+      translate3d(
+        0,
+        1px,
+        0
+      )
+      rotate(0deg);
+  }
+
+  75% {
+    transform:
+      translate3d(
+        2px,
+        -3px,
+        0
+      )
+      rotate(.08deg);
+  }
+
+  100% {
+    transform:
+      translate3d(
+        0,
+        0,
+        0
+      )
+      rotate(0deg);
+  }
+}
+
+
+/* ================================================================
+   EFEITO DO CELULAR
+   ================================================================ */
+
+.hist-cinematica-celular
+.hist-cinematica-img {
+  animation:
+    histCelularCamera
+    var(--duracao-cinematica)
+    ease-out
+    forwards;
+}
+
+.hist-cinematica-celular
+.hist-cinematica-brilho {
+  opacity: 1;
+
+  background:
+    radial-gradient(
+      circle at 50% 65%,
+      rgba(65, 185, 255, .2),
+      transparent 22%
+    );
+
+  animation:
+    histPulsoCelular
+    1.35s
+    ease-in-out
+    infinite;
+}
+
+@keyframes histCelularCamera {
+  from {
+    transform:
+      scale(1.02);
+  }
+
+  to {
+    transform:
+      scale(1.1);
+  }
+}
+
+@keyframes histPulsoCelular {
+  0%,
+  100% {
+    opacity: .18;
+  }
+
+  50% {
+    opacity: .8;
+  }
+}
+
+
+/* ================================================================
+   PHISHING MONSTER — REVELAÇÃO FINAL
+   ================================================================ */
+
+.hist-cena-final {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      #111827 0%,
+      #080b12 45%,
+      #020305 100%
+    );
+}
+
+.hist-revelacao {
+  position: relative;
+
+  width: min(900px, 90vw);
+
+  padding: 50px 30px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+
+  animation:
+    histRevelacao
+    .9s
+    ease-out
+    both;
+}
+
+
+/* AMEAÇA IDENTIFICADA */
+
+.hist-revelacao-kicker {
+  display: block;
+
+  margin-bottom: 18px;
+
+  color: #ff4757;
+
+  font-family:
+    'JetBrains Mono',
+    monospace;
+
+  font-size:
+    clamp(
+      .7rem,
+      1vw,
+      .9rem
+    );
+
+  font-weight: 700;
+
+  letter-spacing: .38em;
+
+  text-transform: uppercase;
+
+  text-shadow:
+    0 0 12px
+    rgba(255, 71, 87, .45);
+}
+
+
+/* PHISHING MONSTER */
+
+.hist-revelacao h1 {
+  margin: 0;
+
+  color: #f1f4ff;
+
+  font-family:
+    'Space Grotesk',
+    sans-serif;
+
+  font-size:
+    clamp(
+      2.4rem,
+      5vw,
+      5rem
+    );
+
+  font-weight: 700;
+
+  line-height: 1;
+
+  letter-spacing: .045em;
+
+  white-space: nowrap;
+
+  text-shadow:
+    0 0 30px
+    rgba(255, 71, 87, .16);
+}
+
+
+/* LINHA VERMELHA */
+
+.hist-revelacao-linha {
+  width: 0;
+
+  height: 2px;
+
+  margin: 24px auto 18px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #ff4757,
+      transparent
+    );
+
+  box-shadow:
+    0 0 14px
+    rgba(255, 71, 87, .55);
+
+  animation:
+    histLinhaRevelacao
+    1s
+    .5s
+    ease-out
+    forwards;
+}
+
+
+/* FASE 1 CONCLUÍDA */
+
+.hist-revelacao p {
+  margin: 0 0 24px;
+
+  color: #7c8ba8;
+
+  font-family:
+    'JetBrains Mono',
+    monospace;
+
+  font-size: .78rem;
+
+  font-weight: 600;
+
+  letter-spacing: .2em;
+
+  text-transform: uppercase;
+}
+
+
+/* BOTÃO */
+
+.hist-revelacao .hist-continuar {
+  margin-top: 4px;
+
+  min-width: 160px;
+
+  padding: 11px 22px;
+
+  color: #071014;
+
+  background: #2de2e6;
+
+  border: 0;
+
+  border-radius: 8px;
+
+  font-weight: 800;
+
+  box-shadow:
+    0 0 20px
+    rgba(45, 226, 230, .15);
+}
+
+
+/* ENTRADA */
+
+@keyframes histRevelacao {
+  from {
+    opacity: 0;
+
+    filter:
+      blur(8px);
+
+    transform:
+      scale(1.06);
+  }
+
+  to {
+    opacity: 1;
+
+    filter:
+      blur(0);
+
+    transform:
+      scale(1);
+  }
+}
+
+
+/* LINHA APARECENDO */
+
+@keyframes histLinhaRevelacao {
+  to {
+    width:
+      min(
+        420px,
+        65vw
+      );
+  }
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+  .hist-revelacao {
+    width: 92vw;
+    padding: 30px 18px;
+  }
+
+  .hist-revelacao-kicker {
+    margin-bottom: 14px;
+
+    font-size: .62rem;
+
+    letter-spacing: .25em;
+  }
+
+  .hist-revelacao h1 {
+    font-size:
+      clamp(
+        2rem,
+        10vw,
+        3.2rem
+      );
+
+    white-space: normal;
+  }
+
+  .hist-revelacao p {
+    font-size: .65rem;
+  }
+}
+
+
+/* ================================================================
+   EFEITOS SOBRE AS CINEMÁTICAS
+   ================================================================ */
+
+.hist-cinematica-luzes,
+.hist-cinematica-brilho,
+.hist-cinematica-glitch,
+.hist-cinematica-vinheta {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+}
+
+.hist-cinematica-luzes {
+  opacity: .18;
+
+  background:
+    linear-gradient(
+      110deg,
+      transparent 28%,
+      rgba(255, 255, 255, .14)
+      46%,
+      transparent 62%
+    );
+
+  transform:
+    translateX(-120%);
+
+  animation:
+    histLuzPassando
+    2.8s
+    linear
+    infinite;
+}
+
+@keyframes histLuzPassando {
+  from {
+    transform:
+      translateX(-120%);
+  }
+
+  to {
+    transform:
+      translateX(120%);
+  }
+}
+
+.hist-cinematica-brilho {
+  opacity: 0;
+}
+
+.hist-cinematica-glitch {
+  opacity: 0;
+
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 4px,
+      rgba(45, 226, 230, .075)
+      5px,
+      transparent 6px
+    );
+
+  mix-blend-mode: screen;
+}
+
+.hist-cinematica-vinheta {
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 42%,
+      rgba(0, 0, 0, .18) 67%,
+      rgba(0, 0, 0, .72) 100%
+    );
+}
+
+
+/* ================================================================
+   BARRAS CINEMATOGRÁFICAS
+   ================================================================ */
+
+.hist-cinema-bar {
+  position: absolute;
+
+  z-index: 5;
+
+  left: 0;
+
+  width: 100%;
+
+  height: 5.5vh;
+
+  background: #000;
+
+  pointer-events: none;
+}
+
+.hist-cinema-bar-top {
+  top: 0;
+}
+
+.hist-cinema-bar-bottom {
+  bottom: 0;
+}
+
+
+/* ================================================================
+   TEXTO DA CINEMÁTICA
+   ================================================================ */
+
+.hist-cinematica-legenda {
+  position: absolute;
+
+  z-index: 8;
+
+  left: 7vw;
+
+  bottom: 10vh;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+  text-shadow:
+    0 2px 10px #000;
+}
+
+.hist-cinematica-legenda strong {
+  color: #fff;
+
+  font-family:
+    'Space Grotesk',
+    sans-serif;
+
+  font-size:
+    clamp(
+      1.1rem,
+      2.2vw,
+      2rem
+    );
+
+  letter-spacing: .08em;
+}
+
+.hist-cinematica-legenda span {
+  color: #2de2e6;
+
+  font-family:
+    'JetBrains Mono',
+    monospace;
+
+  font-size: .75rem;
+
+  letter-spacing: .12em;
+}
+
+.hist-cinematica-pular {
+  position: absolute;
+
+  z-index: 10;
+
+  right: 4vw;
+
+  bottom: 9vh;
+
+  padding: 8px 14px;
+
+  color: #e8edf9;
+
+  background:
+    rgba(10, 14, 26, .7);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, .25);
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  backdrop-filter:
+    blur(8px);
+}
+
+
+/* ================================================================
+   PHISHING MONSTER — REVELAÇÃO FINAL
+   ================================================================ */
+
+.hist-cena-final {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background:
+    radial-gradient(
+      circle at center,
+      #101522,
+      #020305 68%
+    );
+}
+
+.hist-revelacao {
+  position: relative;
+
+  padding: 30px;
+
+  text-align: center;
+
+  animation:
+    histRevelacao
+    .9s
+    ease-out
+    both;
+}
+
+.hist-revelacao-kicker {
+  display: block;
+
+  margin-bottom: 12px;
+
+  color: #ff4757;
+
+  font-family:
+    'JetBrains Mono',
+    monospace;
+
+  font-size:
+    clamp(
+      .7rem,
+      1vw,
+      .9rem
+    );
+
+  letter-spacing: .35em;
+}
+
+.hist-revelacao h1 {
+  margin: 0;
+
+  color: #e8edf9;
+
+  font-family:
+    'Space Grotesk',
+    sans-serif;
+
+  font-size:
+    clamp(
+      2.3rem,
+      7vw,
+      6rem
+    );
+
+  letter-spacing: .06em;
+
+  text-shadow:
+    0 0 30px
+    rgba(255, 71, 87, .25);
+}
+
+.hist-revelacao p {
+  margin: 8px 0 0;
+
+  color: #7c8ba8;
+
+  font-family:
+    'JetBrains Mono',
+    monospace;
+
+  font-size: .75rem;
+
+  letter-spacing: .18em;
+}
+
+.hist-revelacao-linha {
+  width: 0;
+
+  height: 2px;
+
+  margin: 18px auto;
+
+  background: #ff4757;
+
+  box-shadow:
+    0 0 12px
+    rgba(255, 71, 87, .5);
+
+  animation:
+    histLinhaRevelacao
+    1s
+    .5s
+    ease-out
+    forwards;
+}
+
+@keyframes histRevelacao {
+  from {
+    opacity: 0;
+
+    filter:
+      blur(8px);
+
+    transform:
+      scale(1.08);
+  }
+
+  to {
+    opacity: 1;
+
+    filter:
+      blur(0);
+
+    transform:
+      scale(1);
+  }
+}
+
+@keyframes histLinhaRevelacao {
+  to {
+    width:
+      min(
+        420px,
+        70vw
+      );
+  }
+}
+
+
+/* ================================================================
+   MOBILE
+   ================================================================ */
+
+@media (
+  max-width: 700px
+) {
+  .hist-hud {
+    grid-template-columns:
+      auto 1fr;
+
+    gap: 10px;
+  }
+
+  .hist-hud-centro {
+    display: none;
+  }
+
+  .hist-progresso {
+    grid-column: 2;
+
+    justify-self: end;
+  }
+
+  .hist-ponto {
+    width: 14px;
+  }
+
+  .hist-sprite {
+    height: 46vh;
+  }
+
+  .hist-sprite-img {
+    max-width: 52vw;
+  }
+
+  .hist-falas {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 10px;
+  }
+
+  .hist-balao,
+  .hist-balao-esq,
+  .hist-balao-dir {
+    order: 0;
+
+    width: auto;
+
+    margin-left: 0;
+  }
+
+  .hist-balao-texto {
+    font-size: .96rem;
+  }
+
+  .hist-celular {
+    width: 34vw;
+
+    height: 30vh;
+
+    bottom: 3vh;
+  }
+
+  .hist-celular-msg {
+    font-size: .66rem;
+  }
+
+  .hist-cinema-bar {
+    height: 4vh;
+  }
+
+  .hist-cinematica-legenda {
+    left: 5vw;
+
+    bottom: 8vh;
+  }
+
+  .hist-cinematica-pular {
+    right: 5vw;
+
+    bottom: 7vh;
+  }
+}
+
+
+/* ================================================================
+   ACESSIBILIDADE — REDUZIR MOVIMENTO
+   ================================================================ */
+
+@media (
+  prefers-reduced-motion:
+  reduce
+) {
+  .hist-fundo,
+  .hist-sprite,
+  .hist-sprite-img,
+  .hist-celular,
+  .hist-cinematica-camera,
+  .hist-cinematica-img,
+  .hist-cinematica-luzes,
+  .hist-cinematica-brilho,
+  .hist-cinematica-glitch {
+    animation: none !important;
+
+    transition: none !important;
+  }
+}
+
+/* ================================================================
+   TELA FINAL — PHISHING MONSTER
+   ================================================================ */
+
+.hist-revelacao-final {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  background: #000;
+
+  animation:
+    phishingFinalEntrada
+    1s
+    ease-out
+    both;
+}
+
+
+/* IMAGEM */
+
+.hist-revelacao-final-img {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center;
+
+  animation:
+    phishingFinalZoom
+    10s
+    ease-out
+    forwards;
+}
+
+
+/* ESCURECIMENTO CINEMATOGRÁFICO */
+
+.hist-revelacao-final-vinheta {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 48%,
+      rgba(0, 0, 0, .3) 100%
+    );
+}
+
+
+/* BOTÃO */
+
+.hist-revelacao-final-botao {
+  position: absolute;
+
+  z-index: 5;
+
+  left: 50%;
+  bottom: 7%;
+
+  transform:
+    translateX(-50%);
+
+  padding:
+    12px 26px;
+
+  min-width: 170px;
+
+  color: #071014;
+
+  background: #2de2e6;
+
+  border: none;
+
+  border-radius: 9px;
+
+  font-size: .95rem;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 0 24px
+    rgba(45, 226, 230, .35);
+
+  transition:
+    transform .15s ease,
+    box-shadow .15s ease,
+    filter .15s ease;
+}
+
+
+.hist-revelacao-final-botao:hover {
+  transform:
+    translateX(-50%)
+    translateY(-2px);
+
+  filter:
+    brightness(1.1);
+
+  box-shadow:
+    0 0 35px
+    rgba(45, 226, 230, .55);
+}
+
+
+/* ENTRADA */
+
+@keyframes phishingFinalEntrada {
+
+  from {
+    opacity: 0;
+
+    filter:
+      brightness(0)
+      blur(5px);
+  }
+
+  to {
+    opacity: 1;
+
+    filter:
+      brightness(1)
+      blur(0);
+  }
+}
+
+
+/* MOVIMENTO BEM LEVE DA IMAGEM */
+
+@keyframes phishingFinalZoom {
+
+  from {
+    transform:
+      scale(1.02);
+  }
+
+  to {
+    transform:
+      scale(1.08);
+  }
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+  .hist-revelacao-final-img {
+    object-position: center;
+  }
+
+  .hist-revelacao-final-botao {
+    bottom: 5%;
+
+    min-width: 150px;
+
+    padding:
+      10px 20px;
+  }
+}
+
+/* ================================================================
+   TELA FINAL PHISHING MONSTER — CORREÇÃO
+   ================================================================ */
+
+.hist-cena-final {
+  position: fixed;
+  inset: 0;
+
+  display: block;
+
+  width: 100vw;
+  height: 100vh;
+
+  padding: 0;
+  margin: 0;
+
+  overflow: hidden;
+
+  background: #000;
+}
+
+
+/* container ocupa a tela inteira */
+
+.hist-revelacao-final {
+  position: absolute;
+  inset: 0;
+
+  z-index: 1;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  padding: 0;
+  margin: 0;
+
+  overflow: hidden;
+
+  background: #000;
+}
+
+
+/* imagem de fundo */
+
+.hist-revelacao-final-img {
+  position: absolute;
+
+  z-index: 1;
+
+  top: 0;
+  left: 0;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  max-width: none;
+  max-height: none;
+
+  margin: 0;
+
+  object-fit: cover;
+  object-position: center;
+
+  opacity: 1;
+
+  animation:
+    phishingMonsterEntrada
+    1.2s
+    ease-out
+    both,
+    phishingMonsterZoom
+    12s
+    1.2s
+    ease-out
+    forwards;
+}
+
+
+/* vinheta */
+
+.hist-revelacao-final-vinheta {
+  position: absolute;
+  inset: 0;
+
+  z-index: 2;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 50%,
+      rgba(0, 0, 0, .35) 100%
+    );
+}
+
+
+/* botão REAL do site */
+
+.hist-revelacao-final-botao {
+  position: absolute;
+
+  z-index: 10;
+
+  left: 50%;
+  bottom: 6%;
+
+  transform:
+    translateX(-50%);
+
+  min-width: 170px;
+
+  padding: 12px 24px;
+
+  color: #071014;
+
+  background: #2de2e6;
+
+  border: none;
+  border-radius: 9px;
+
+  font-size: .95rem;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 0 25px
+    rgba(45, 226, 230, .4);
+}
+
+
+.hist-revelacao-final-botao:hover {
+  transform:
+    translateX(-50%)
+    translateY(-2px);
+
+  filter:
+    brightness(1.1);
+
+  box-shadow:
+    0 0 35px
+    rgba(45, 226, 230, .65);
+}
+
+
+/* entrada */
+
+@keyframes phishingMonsterEntrada {
+
+  0% {
+    opacity: 0;
+
+    filter:
+      brightness(0)
+      blur(8px);
+
+    transform:
+      scale(1.08);
+  }
+
+  100% {
+    opacity: 1;
+
+    filter:
+      brightness(1)
+      blur(0);
+
+    transform:
+      scale(1.02);
+  }
+}
+
+
+/* movimento lento */
+
+@keyframes phishingMonsterZoom {
+
+  from {
+    transform:
+      scale(1.02);
+  }
+
+  to {
+    transform:
+      scale(1.08);
+  }
+}
+
+/* ================================================================
+   CORREÇÃO DEFINITIVA — CINEMÁTICAS DA FASE 1
+   Cole este bloco NO FINAL do historia.css
+   ================================================================ */
+
+
+/* ------------------------------------------------
+   BASE DAS CINEMÁTICAS
+   ------------------------------------------------ */
+
+.hist-cinematica {
+  position: absolute;
+  inset: 0;
+
+  z-index: 50;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  background: #000;
+
+  opacity: 1;
+
+  transition:
+    opacity .35s ease;
+}
+
+.hist-cinematica.saindo {
+  opacity: 0;
+}
+
+
+/* ------------------------------------------------
+   CÂMERA
+
+   IMPORTANTE:
+   antes estava inset: -3%, o que já ampliava
+   e cortava a imagem.
+   ------------------------------------------------ */
+
+.hist-cinematica-camera {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  transform: none;
+
+  will-change: transform;
+}
+
+
+/* ------------------------------------------------
+   IMAGEM
+   ------------------------------------------------ */
+
+.hist-cinematica-img {
+  position: absolute;
+  inset: 0;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  max-width: none;
+  max-height: none;
+
+  object-fit: cover;
+  object-position: center;
+
+  transform-origin: center center;
+
+  user-select: none;
+  pointer-events: none;
+
+  will-change: transform;
+}
+
+
+/* ================================================================
+   CAMINHADA — PARAÍSO
+   ================================================================ */
+
+/*
+  Nesta cena queremos enxergar a composição inteira.
+
+  "contain" evita cortar Murilo/Vitor.
+*/
+
+.hist-cinematica-caminhada
+.hist-cinematica-camera {
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background: #05070b;
+
+  animation:
+    histPassosSuaves
+    1.15s
+    ease-in-out
+    infinite;
+}
+
+
+.hist-cinematica-caminhada
+.hist-cinematica-img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+  object-position: center center;
+
+  animation:
+    histAndandoParaFrente
+    var(--duracao-cinematica)
+    ease-in-out
+    forwards;
+}
+
+
+/*
+  O zoom agora é MUITO pequeno.
+
+  Antes:
+  1.02 -> 1.12
+
+  Agora:
+  1 -> 1.025
+*/
+
+@keyframes histAndandoParaFrente {
+
+  0% {
+    transform:
+      scale(1)
+      translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform:
+      scale(1.012)
+      translate3d(0, -2px, 0);
+  }
+
+  100% {
+    transform:
+      scale(1.025)
+      translate3d(0, -4px, 0);
+  }
+}
+
+
+/*
+  Simulação dos passos.
+
+  É propositalmente mínima.
+*/
+
+@keyframes histPassosSuaves {
+
+  0% {
+    transform:
+      translate3d(0, 0, 0)
+      rotate(0deg);
+  }
+
+  25% {
+    transform:
+      translate3d(-1px, -2px, 0)
+      rotate(-.025deg);
+  }
+
+  50% {
+    transform:
+      translate3d(0, 1px, 0)
+      rotate(0deg);
+  }
+
+  75% {
+    transform:
+      translate3d(1px, -2px, 0)
+      rotate(.025deg);
+  }
+
+  100% {
+    transform:
+      translate3d(0, 0, 0)
+      rotate(0deg);
+  }
+}
+
+
+/* ================================================================
+   CELULAR NO BANCO
+   ================================================================ */
+
+.hist-cinematica-celular
+.hist-cinematica-camera {
+  inset: 0;
+}
+
+
+.hist-cinematica-celular
+.hist-cinematica-img {
+  object-fit: contain;
+  object-position: center;
+
+  animation:
+    histCelularNovo
+    var(--duracao-cinematica)
+    ease-out
+    forwards;
+}
+
+
+@keyframes histCelularNovo {
+
+  from {
+    transform:
+      scale(1);
+  }
+
+  to {
+    transform:
+      scale(1.035);
+  }
+}
+
+
+/* brilho do celular */
+
+.hist-cinematica-celular
+.hist-cinematica-brilho {
+  opacity: 1;
+
+  background:
+    radial-gradient(
+      circle at 50% 65%,
+      rgba(65, 185, 255, .20),
+      transparent 24%
+    );
+
+  animation:
+    histPulsoCelularNovo
+    1.35s
+    ease-in-out
+    infinite;
+}
+
+
+@keyframes histPulsoCelularNovo {
+
+  0%,
+  100% {
+    opacity: .15;
+  }
+
+  50% {
+    opacity: .75;
+  }
+}
+
+
+/* ================================================================
+   VULTO / PHISHING MONSTER
+   ================================================================ */
+
+.hist-cinematica-monstro
+.hist-cinematica-camera {
+  inset: 0;
+}
+
+
+.hist-cinematica-monstro
+.hist-cinematica-img {
+  object-fit: contain;
+  object-position: center;
+
+  animation:
+    histMonstroCameraNova
+    var(--duracao-cinematica)
+    ease-out
+    forwards;
+}
+
+
+@keyframes histMonstroCameraNova {
+
+  from {
+    transform:
+      scale(1);
+  }
+
+  to {
+    transform:
+      scale(1.025);
+  }
+}
+
+
+/* ================================================================
+   TELA FINAL — PHISHING MONSTER
+   ================================================================ */
+
+.hist-cena-final {
+  position: fixed;
+  inset: 0;
+
+  display: block;
+
+  width: 100vw;
+  height: 100vh;
+
+  padding: 0;
+  margin: 0;
+
+  overflow: hidden;
+
+  background: #000;
+}
+
+
+.hist-revelacao-final {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  padding: 0;
+  margin: 0;
+
+  overflow: hidden;
+
+  background: #000;
+}
+
+
+/* imagem final SEM CORTAR */
+
+.hist-revelacao-final-img {
+  position: absolute;
+  inset: 0;
+
+  z-index: 1;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  max-width: none;
+  max-height: none;
+
+  object-fit: contain;
+  object-position: center;
+
+  user-select: none;
+  pointer-events: none;
+
+  animation:
+    histFinalEntradaNova
+    1s
+    ease-out
+    both;
+}
+
+
+.hist-revelacao-final-vinheta {
+  position: absolute;
+  inset: 0;
+
+  z-index: 2;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 62%,
+      rgba(0, 0, 0, .32) 100%
+    );
+}
+
+
+/* botão verdadeiro */
+
+.hist-revelacao-final-botao {
+  position: absolute;
+
+  z-index: 10;
+
+  left: 50%;
+  bottom: 5vh;
+
+  transform:
+    translateX(-50%);
+
+  min-width: 170px;
+
+  padding:
+    12px
+    26px;
+
+  color: #071014;
+
+  background: #2de2e6;
+
+  border: 0;
+
+  border-radius: 9px;
+
+  font-size: .95rem;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 0 25px
+    rgba(45, 226, 230, .35);
+
+  transition:
+    transform .15s ease,
+    filter .15s ease,
+    box-shadow .15s ease;
+}
+
+
+.hist-revelacao-final-botao:hover {
+  transform:
+    translateX(-50%)
+    translateY(-2px);
+
+  filter:
+    brightness(1.1);
+
+  box-shadow:
+    0 0 35px
+    rgba(45, 226, 230, .6);
+}
+
+
+@keyframes histFinalEntradaNova {
+
+  from {
+    opacity: 0;
+
+    filter:
+      brightness(.2)
+      blur(4px);
+
+    transform:
+      scale(1.01);
+  }
+
+  to {
+    opacity: 1;
+
+    filter:
+      brightness(1)
+      blur(0);
+
+    transform:
+      scale(1);
+  }
+}
+
+
+/* ================================================================
+   BARRAS CINEMATOGRÁFICAS
+   ================================================================ */
+
+.hist-cinema-bar {
+  position: absolute;
+
+  z-index: 20;
+
+  left: 0;
+
+  width: 100%;
+
+  height: clamp(
+    12px,
+    2.2vh,
+    25px
+  );
+
+  background: #000;
+
+  pointer-events: none;
+}
+
+
+.hist-cinema-bar-top {
+  top: 0;
+}
+
+
+.hist-cinema-bar-bottom {
+  bottom: 0;
+}
+
+
+/* ================================================================
+   LEGENDA DA CINEMÁTICA
+   ================================================================ */
+
+.hist-cinematica-legenda {
+  position: absolute;
+
+  z-index: 25;
+
+  left: clamp(
+    20px,
+    4vw,
+    70px
+  );
+
+  bottom: clamp(
+    42px,
+    7vh,
+    90px
+  );
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+
+  max-width: min(
+    500px,
+    70vw
+  );
+
+  pointer-events: none;
+
+  text-shadow:
+    0 2px 10px #000,
+    0 0 20px #000;
+}
+
+
+.hist-cinematica-legenda strong {
+  color: #fff;
+
+  font-size:
+    clamp(
+      1.15rem,
+      2.3vw,
+      2rem
+    );
+
+  font-weight: 900;
+
+  letter-spacing: .05em;
+
+  text-transform: uppercase;
+}
+
+
+.hist-cinematica-legenda span {
+  color: #2de2e6;
+
+  font-family:
+    'JetBrains Mono',
+    monospace;
+
+  font-size:
+    clamp(
+      .7rem,
+      1vw,
+      .9rem
+    );
+
+  font-weight: 700;
+
+  letter-spacing: .1em;
+}
+
+
+/* ================================================================
+   BOTÃO PULAR
+   ================================================================ */
+
+.hist-cinematica-pular {
+  position: absolute;
+
+  z-index: 30;
+
+  right: 28px;
+  bottom: 35px;
+
+  padding:
+    9px
+    15px;
+
+  color: #e8edf9;
+
+  background:
+    rgba(5, 9, 17, .7);
+
+  border:
+    1px solid
+    rgba(124, 139, 168, .5);
+
+  border-radius: 8px;
+
+  backdrop-filter:
+    blur(8px);
+
+  cursor: pointer;
+}
+
+
+.hist-cinematica-pular:hover {
+  border-color: #2de2e6;
+
+  color: #2de2e6;
+}
+
+
+/* ================================================================
+   MOBILE
+   ================================================================ */
+
+@media (max-width: 700px) {
+
+  .hist-cinematica-caminhada
+  .hist-cinematica-img,
+
+  .hist-cinematica-celular
+  .hist-cinematica-img,
+
+  .hist-cinematica-monstro
+  .hist-cinematica-img {
+
+    object-fit: contain;
+    object-position: center;
+  }
+
+
+  .hist-cinematica-legenda {
+    left: 18px;
+
+    bottom: 65px;
+
+    max-width: 75vw;
+  }
+
+
+  .hist-cinematica-pular {
+    right: 15px;
+    bottom: 25px;
+  }
+
+
+  .hist-revelacao-final-botao {
+    bottom: 4vh;
+
+    min-width: 150px;
+
+    padding:
+      10px
+      20px;
+  }
+}
+
+
+/* ================================================================
+   ACESSIBILIDADE
+   ================================================================ */
+
+@media (
+  prefers-reduced-motion: reduce
+) {
+
+  .hist-cinematica-camera,
+  .hist-cinematica-img,
+  .hist-revelacao-final-img {
+
+    animation: none !important;
+
+    transform: none !important;
+  }
+}
+
+
+/* =================================================================
+   AJUSTE FINAL — CINEMÁTICAS + PHISHING MONSTER
+   ================================================================= */
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.hist-cinematica-camera {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  background: #05070b !important;
+}
+
+/* Preenche as laterais do monitor usando a própria arte desfocada. */
+.hist-cinematica-bg {
+  position: absolute !important;
+  inset: -3% !important;
+  z-index: 0 !important;
+  display: block !important;
+  width: 106% !important;
+  height: 106% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  filter: blur(18px) brightness(.42) saturate(.82) !important;
+  transform: scale(1.04) !important;
+  opacity: 1 !important;
+  pointer-events: none !important;
+}
+
+/* A arte principal fica inteira: não corta cabeça nem pés. */
+.hist-cinematica-img {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  opacity: 1 !important;
+  filter: none !important;
+  pointer-events: none !important;
+}
+
+.hist-cinematica-caminhada .hist-cinematica-camera {
+  inset: 0 !important;
+  animation: histPassosCameraV2 1.15s ease-in-out infinite !important;
+}
+
+.hist-cinematica-caminhada .hist-cinematica-img {
+  object-fit: contain !important;
+  object-position: center center !important;
+  animation: histCaminhadaArteV2 var(--duracao-cinematica) ease-in-out forwards !important;
+}
+
+.hist-cinematica-caminhada .hist-cinematica-bg {
+  animation: histCaminhadaFundoV2 var(--duracao-cinematica) ease-in-out forwards !important;
+}
+
+@keyframes histPassosCameraV2 {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -1px, 0); }
+}
+
+@keyframes histCaminhadaArteV2 {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(0, -2px, 0) scale(1.003); }
+  100% { transform: translate3d(0, 0, 0) scale(1.006); }
+}
+
+@keyframes histCaminhadaFundoV2 {
+  from { transform: scale(1.04); }
+  to { transform: scale(1.07); }
+}
+
+.hist-cinematica-celular .hist-cinematica-img,
+.hist-cinematica-monstro .hist-cinematica-img {
+  object-fit: contain !important;
+  object-position: center center !important;
+}
+
+/* ===== TELA FINAL ===== */
+
+.hist-cena.hist-cena-final {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483000 !important;
+  display: block !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #000 !important;
+}
+
+.hist-final-monstro-v2 {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  display: block !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #000 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* A arte final 16:9 ocupa a tela toda e não recebe filtro/zoom. */
+.hist-final-monstro-v2-img {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  filter: none !important;
+  transform: none !important;
+  animation: none !important;
+  pointer-events: none !important;
+}
+
+/* Botão HTML transparente exatamente sobre o botão já desenhado no PNG. */
+.hist-final-monstro-v2-botao {
+  position: absolute !important;
+  z-index: 20 !important;
+  left: 49% !important;
+  bottom: 10.2% !important;
+  width: 16.3% !important;
+  height: 7.4% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: translateX(-50%) !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  cursor: pointer !important;
+}
+
+.hist-final-monstro-v2-botao:hover {
+  transform: translateX(-50%) !important;
+  background: rgba(45, 226, 230, .07) !important;
+  box-shadow: 0 0 28px rgba(45, 226, 230, .18) !important;
+}
+
+.hist-final-monstro-v2-botao:active {
+  transform: translateX(-50%) scale(.985) !important;
+}
+
+.hist-final-monstro-v2-botao:focus-visible {
+  outline: 2px solid #2de2e6 !important;
+  outline-offset: 3px !important;
+}
+
+@media (max-width: 700px) {
+  .hist-cinematica-img {
+    object-fit: contain !important;
+    object-position: center center !important;
+  }
+  .hist-cinematica-bg {
+    filter: blur(14px) brightness(.38) saturate(.82) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hist-cinematica-camera,
+  .hist-cinematica-img,
+  .hist-cinematica-bg,
+  .hist-final-monstro-v2-img {
+    animation: none !important;
+  }
+}
+
+
+/* ================================================================
+   OVERRIDES FINAIS — FULLSCREEN SEM ALTERAR O LAYOUT GLOBAL
+   ================================================================ */
+
+.hist-cena {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #000 !important;
+  z-index: 9999 !important;
+}
+
+.hist-intro,
+.hist-cinematica,
+.hist-revelacao-final {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #000 !important;
+}
+
+.hist-intro-video,
+.hist-cinematica-camera,
+.hist-cinematica-img,
+.hist-revelacao-final-video {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+.hist-intro-video,
+.hist-cinematica-img,
+.hist-revelacao-final-video {
+  display: block !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+/* A caminhada horizontal agora preenche 100% do viewport. */
+.hist-cinematica-caminhada .hist-cinematica-camera {
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  transform: none;
+}
+
+.hist-cinematica-caminhada .hist-cinematica-img {
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+/* Todas as outras artes cinematográficas também cobrem a tela. */
+.hist-cinematica-celular .hist-cinematica-img,
+.hist-cinematica-vulto .hist-cinematica-img,
+.hist-cinematica-normal .hist-cinematica-img {
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+/* Remove as barras pretas artificiais das cinematics. */
+.hist-cinema-bar {
+  display: none !important;
+}
+
+/* Final em MP4. */
+.hist-revelacao-final {
+  z-index: 10000 !important;
+}
+
+.hist-revelacao-final-video {
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hist-revelacao-final-botao {
+  position: absolute !important;
+  z-index: 5 !important;
+  left: 50% !important;
+  bottom: clamp(28px, 7.5vh, 82px) !important;
+  transform: translateX(-50%) !important;
+  min-width: 220px !important;
+  height: 58px !important;
+  padding: 0 28px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: #2de2e6 !important;
+  color: #061018 !important;
+  font: 800 1rem/1 'Inter', sans-serif !important;
+  cursor: pointer !important;
+  box-shadow: 0 0 24px rgba(45, 226, 230, .45) !important;
+}
+
+.hist-revelacao-final-botao:hover {
+  transform: translateX(-50%) translateY(-2px) !important;
+  filter: brightness(1.08);
+}
+
+@media (max-width: 700px) {
+  .hist-revelacao-final-botao {
+    min-width: 180px !important;
+    height: 52px !important;
+    bottom: max(22px, env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* ================================================================
+   CYBERSHIELD — EXTENSÕES CINEMÁTICAS DA FASE 1
+   ================================================================ */
+
+
+/* ================================================================
+   VÍDEOS NAS CINEMÁTICAS
+   ================================================================ */
+
+.hist-cinematica-video {
+  object-fit: cover;
+}
+
+
+/* ================================================================
+   BATALHA
+   ================================================================ */
+
+.hist-cinematica-batalha .hist-cinematica-img,
+.hist-cinematica-golpe-final .hist-cinematica-img {
+  animation:
+    histImpactoCamera
+    var(--duracao-cinematica, 6000ms)
+    ease-out
+    both;
+}
+
+
+/* ================================================================
+   OBSERVADOR
+   ================================================================ */
+
+.hist-cinematica-suspense .hist-cinematica-img {
+  animation:
+    histSuspenseCamera
+    var(--duracao-cinematica, 6000ms)
+    ease-out
+    both;
+}
+
+
+/* ================================================================
+   MANHÃ / ZERO TRUST
+   ================================================================ */
+
+.hist-cinematica-manha .hist-cinematica-img,
+.hist-cinematica-revelacao .hist-cinematica-img {
+  animation:
+    histRevelacaoCamera
+    var(--duracao-cinematica, 6000ms)
+    ease-out
+    both;
+}
+
+
+/* ================================================================
+   MOVIMENTOS DE CÂMERA
+   ================================================================ */
+
+@keyframes histImpactoCamera {
+  0% {
+    transform: scale(1.04);
+
+    filter:
+      brightness(.9)
+      contrast(1.06);
+  }
+
+  45% {
+    transform:
+      scale(1.075)
+      translate3d(-.4%, .2%, 0);
+  }
+
+  48% {
+    transform:
+      scale(1.08)
+      translate3d(.35%, -.2%, 0);
+  }
+
+  52% {
+    transform:
+      scale(1.075)
+      translate3d(-.2%, .15%, 0);
+  }
+
+  100% {
+    transform: scale(1.1);
+
+    filter:
+      brightness(1)
+      contrast(1.03);
+  }
+}
+
+
+@keyframes histSuspenseCamera {
+  from {
+    transform:
+      scale(1.02);
+
+    filter:
+      brightness(.8)
+      saturate(.85);
+  }
+
+  to {
+    transform:
+      scale(1.095);
+
+    filter:
+      brightness(.95)
+      saturate(.95);
+  }
+}
+
+
+@keyframes histRevelacaoCamera {
+  from {
+    transform:
+      scale(1.015);
+  }
+
+  to {
+    transform:
+      scale(1.07);
+  }
+}
+
+
+/* ================================================================
+   FINAL DA FASE
+   ================================================================ */
+
+.hist-revelacao-final {
+  position: fixed;
+
+  inset: 0;
+
+  overflow: hidden;
+
+  background: #05070d;
+}
+
+
+.hist-revelacao-final-video {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+
+.hist-revelacao-final-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(5, 7, 13, .92),
+      rgba(5, 7, 13, .08) 60%
+    ),
+    radial-gradient(
+      circle at center,
+      transparent 40%,
+      rgba(0, 0, 0, .28)
+    );
+}
+
+
+.hist-revelacao-final-conteudo {
+  position: absolute;
+
+  z-index: 3;
+
+  left: 50%;
+
+  bottom:
+    clamp(
+      34px,
+      7vh,
+      90px
+    );
+
+  width:
+    min(
+      760px,
+      calc(100% - 40px)
+    );
+
+  transform:
+    translateX(-50%);
+
+  text-align: center;
+
+  text-shadow:
+    0 2px 18px
+    rgba(0, 0, 0, .9);
+}
+
+
+.hist-revelacao-final-conteudo > span {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #2de2e6;
+
+  font:
+    800
+    .72rem
+    'JetBrains Mono',
+    monospace;
+
+  letter-spacing: .22em;
+}
+
+
+.hist-revelacao-final-conteudo h2 {
+  margin: 0;
+
+  color: #fff;
+
+  font:
+    800
+    clamp(
+      2rem,
+      5vw,
+      4.4rem
+    )
+    'Space Grotesk',
+    sans-serif;
+
+  letter-spacing: -.04em;
+}
+
+
+.hist-revelacao-final-conteudo p {
+  max-width: 58ch;
+
+  margin:
+    10px auto
+    22px;
+
+  color: #c7d2e9;
+
+  font-size:
+    clamp(
+      .9rem,
+      1.6vw,
+      1.08rem
+    );
+
+  line-height: 1.55;
+}
+
+
+.hist-revelacao-final-botao {
+  position: static;
+
+  padding:
+    12px 22px;
+
+  border:
+    1px solid
+    rgba(
+      45,
+      226,
+      230,
+      .65
+    );
+
+  border-radius: 10px;
+
+  background:
+    rgba(
+      8,
+      18,
+      30,
+      .82
+    );
+
+  color: #fff;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  backdrop-filter:
+    blur(8px);
+
+  transition:
+    background .15s ease,
+    color .15s ease,
+    transform .15s ease;
+}
+
+
+.hist-revelacao-final-botao:hover {
+  background:
+    #2de2e6;
+
+  color:
+    #071019;
+
+  transform:
+    translateY(-2px);
+}
