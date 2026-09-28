@@ -1,5 +1,4 @@
 import {
-  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -13,6 +12,8 @@ import {
   FASES,
   PERSONAGENS,
 } from './historia.js'
+
+import BossBattle from './BossBattle.jsx'
 
 import './historia.css'
 
@@ -31,7 +32,8 @@ function embaralhar(lista) {
   ) {
     const j =
       Math.floor(
-        Math.random() * (i + 1)
+        Math.random() *
+        (i + 1)
       )
 
     ;[
@@ -47,12 +49,91 @@ function embaralhar(lista) {
 }
 
 
+function preloadImagem(src) {
+  if (!src) {
+    return
+  }
+
+  const imagem =
+    new Image()
+
+  imagem.src =
+    src
+}
+
+
+function preloadFase(fase) {
+  if (!fase?.cenas) {
+    return
+  }
+
+  const imagens =
+    new Set()
+
+  fase.cenas.forEach(
+    (cena) => {
+      if (cena.fundo) {
+        imagens.add(
+          cena.fundo
+        )
+      }
+
+      cena.elenco?.forEach(
+        (personagem) => {
+          imagens.add(
+            `/historia/personagens/${personagem.id}/neutro.png`
+          )
+
+          imagens.add(
+            `/historia/personagens/${personagem.id}/fala.png`
+          )
+
+          imagens.add(
+            `/historia/personagens/${personagem.id}/pergunta.png`
+          )
+        }
+      )
+    }
+  )
+
+  // Como o elenco da sala é dinâmico,
+  // garantimos o preload dos quatro.
+  ;[
+    'murilo',
+    'vitor',
+    'cleiton',
+    'fabio',
+  ].forEach(
+    (id) => {
+      imagens.add(
+        `/historia/personagens/${id}/neutro.png`
+      )
+
+      imagens.add(
+        `/historia/personagens/${id}/fala.png`
+      )
+
+      imagens.add(
+        `/historia/personagens/${id}/pergunta.png`
+      )
+    }
+  )
+
+  imagens.forEach(
+    preloadImagem
+  )
+}
+
+
 function useDigitando(
   texto,
   velocidade = 16
 ) {
-  const [n, setN] =
-    useState(0)
+  const [
+    n,
+    setN,
+  ] = useState(0)
+
 
   useEffect(() => {
     setN(0)
@@ -61,40 +142,67 @@ function useDigitando(
       return undefined
     }
 
+
     const reduzirMovimento =
       window.matchMedia?.(
         '(prefers-reduced-motion: reduce)'
       ).matches
 
+
     if (reduzirMovimento) {
-      setN(texto.length)
+      setN(
+        texto.length
+      )
+
       return undefined
     }
 
-    const id =
-      window.setInterval(() => {
-        setN((valor) => {
-          if (
-            valor >= texto.length
-          ) {
-            window.clearInterval(id)
-            return valor
-          }
 
-          return valor + 1
-        })
-      }, velocidade)
+    const timer =
+      window.setInterval(
+        () => {
+          setN(
+            (atual) => {
+              if (
+                atual >=
+                texto.length
+              ) {
+                window.clearInterval(
+                  timer
+                )
+
+                return atual
+              }
+
+              return (
+                atual + 1
+              )
+            }
+          )
+        },
+
+        velocidade
+      )
+
 
     return () =>
-      window.clearInterval(id)
+      window.clearInterval(
+        timer
+      )
 
-  }, [texto, velocidade])
+  }, [
+    texto,
+    velocidade,
+  ])
 
 
   return {
     visivel:
       texto
-        ? texto.slice(0, n)
+        ? texto.slice(
+            0,
+            n
+          )
         : '',
 
     completo:
@@ -112,23 +220,18 @@ function useDigitando(
 
 
 // ================================================================
-// CAMINHO DOS PERSONAGENS
-//
-// SUA ESTRUTURA:
-// public/historia/personagens/murilo/
-// public/historia/personagens/vitor/
-// ================================================================
-
-const caminhoSprite = (
-  id,
-  pose
-) =>
-  `/historia/personagens/${id}/${pose}.png`
-
-
-// ================================================================
 // SPRITE
 // ================================================================
+
+function caminhoSprite(
+  id,
+  pose
+) {
+  return (
+    `/historia/personagens/${id}/${pose}.png`
+  )
+}
+
 
 function Sprite({
   id,
@@ -139,6 +242,7 @@ function Sprite({
 }) {
   const personagem =
     PERSONAGENS[id]
+
 
   const [
     falhas,
@@ -165,7 +269,8 @@ function Sprite({
 
   const espelho =
     lado === 'dir' &&
-    personagem.espelhar !== false
+    personagem.espelhar !==
+      false
       ? -1
       : 1
 
@@ -175,9 +280,18 @@ function Sprite({
       className={`
         hist-sprite
         hist-sprite-${lado}
-        ${ativo ? 'ativo' : ''}
-        ${falando ? 'falando' : ''}
+        ${
+          ativo
+            ? 'ativo'
+            : ''
+        }
+        ${
+          falando
+            ? 'falando'
+            : ''
+        }
       `}
+
       style={{
         '--espelho':
           espelho,
@@ -189,24 +303,32 @@ function Sprite({
 
       {semArte ? (
 
-        <div className="hist-sprite-vazio">
-
+        <div
+          className="
+            hist-sprite-vazio
+          "
+        >
           <strong>
-            {personagem.nome}
+            {
+              personagem.nome
+            }
           </strong>
 
           <small>
             {pose}
           </small>
-
         </div>
 
       ) : (
 
         <img
-          key={poseUsada}
+          key={
+            `${id}-${poseUsada}`
+          }
 
-          className="hist-sprite-img"
+          className="
+            hist-sprite-img
+          "
 
           src={
             caminhoSprite(
@@ -244,89 +366,150 @@ function Sprite({
 // FUNDO
 // ================================================================
 
-function Fundo({ src }) {
-  const [ok, setOk] =
-    useState(true)
+function Fundo({
+  src,
+}) {
+  const [
+    carregado,
+    setCarregado,
+  ] = useState(false)
+
+
+  const [
+    erro,
+    setErro,
+  ] = useState(false)
+
 
   useEffect(() => {
-    setOk(true)
+    setCarregado(false)
+    setErro(false)
+
+    if (!src) {
+      return
+    }
+
+    // Faz o navegador começar
+    // a carregar antes da renderização.
+    preloadImagem(src)
   }, [src])
 
 
-  if (!ok) {
-    return (
-      <div className="hist-fundo hist-fundo-vazio">
-
-        <span>
-          Fundo não encontrado
-        </span>
-
-        <small>
-          {src}
-        </small>
-
-      </div>
-    )
-  }
-
-
   return (
-    <img
-      key={src}
+    <div
+      className={`
+        hist-fundo-wrapper
+        ${
+          carregado
+            ? 'carregado'
+            : ''
+        }
+      `}
+    >
 
-      className="hist-fundo"
+      {!carregado && (
+        <div
+          className="
+            hist-fundo-espera
+          "
+        />
+      )}
 
-      src={src}
 
-      alt=""
+      {!erro && src && (
+        <img
+          key={src}
 
-      draggable="false"
+          className="
+            hist-fundo
+          "
 
-      onError={() =>
-        setOk(false)
-      }
-    />
+          src={src}
+
+          alt=""
+
+          draggable="false"
+
+          onLoad={() =>
+            setCarregado(
+              true
+            )
+          }
+
+          onError={() => {
+            setErro(true)
+            setCarregado(true)
+          }}
+        />
+      )}
+
+
+      {erro && (
+        <div
+          className="
+            hist-fundo
+            hist-fundo-vazio
+          "
+        >
+          <span>
+            Fundo não encontrado
+          </span>
+
+          <small>
+            {src}
+          </small>
+        </div>
+      )}
+
+    </div>
   )
 }
 
 
 // ================================================================
-// INTRO EM VÍDEO
+// INTRO
 // ================================================================
 
 function IntroVideo({
   src,
   onFim,
 }) {
-  const [saindo, setSaindo] =
-    useState(false)
+  const [
+    saindo,
+    setSaindo,
+  ] = useState(false)
 
 
-  const finalizar =
-    useCallback(() => {
-      if (saindo) {
-        return
-      }
+  function finalizar() {
+    if (saindo) {
+      return
+    }
 
-      setSaindo(true)
+    setSaindo(true)
 
-      window.setTimeout(
-        onFim,
-        300
-      )
-    }, [onFim, saindo])
+    window.setTimeout(
+      onFim,
+      300
+    )
+  }
 
 
   return (
     <div
       className={`
         hist-intro
-        ${saindo ? 'saindo' : ''}
+        ${
+          saindo
+            ? 'saindo'
+            : ''
+        }
       `}
     >
 
       <video
-        className="hist-intro-video"
+        className="
+          hist-intro-video
+        "
 
         src={src}
 
@@ -338,214 +521,33 @@ function IntroVideo({
 
         preload="auto"
 
-        onEnded={finalizar}
+        onEnded={
+          finalizar
+        }
 
-        onError={finalizar}
+        onError={
+          finalizar
+        }
       />
 
 
-      <div className="hist-intro-vinheta" />
+      <div
+        className="
+          hist-intro-vinheta
+        "
+      />
 
 
       <button
         type="button"
 
-        className="hist-intro-pular"
-
-        onClick={finalizar}
-      >
-        Pular
-      </button>
-
-    </div>
-  )
-}
-
-
-// ================================================================
-// CINEMÁTICA COM IMAGEM
-// ================================================================
-
-function CinematicaImagem({
-  config,
-  onFim,
-}) {
-  const [
-    saindo,
-    setSaindo,
-  ] = useState(false)
-
-
-  const duracao =
-    config.duracao ||
-    6000
-
-
-  const finalizar =
-    useCallback(() => {
-      setSaindo(true)
-
-      window.setTimeout(
-        onFim,
-        350
-      )
-    }, [onFim])
-
-
-  useEffect(() => {
-    const reduzirMovimento =
-      window.matchMedia?.(
-        '(prefers-reduced-motion: reduce)'
-      ).matches
-
-
-    if (reduzirMovimento) {
-      const timer =
-        window.setTimeout(
-          finalizar,
-          1500
-        )
-
-      return () =>
-        window.clearTimeout(
-          timer
-        )
-    }
-
-
-    const timer =
-      window.setTimeout(
-        finalizar,
-        duracao
-      )
-
-
-    return () =>
-      window.clearTimeout(
-        timer
-      )
-
-  }, [
-    duracao,
-    finalizar,
-  ])
-
-
-  return (
-    <div
-      className={`
-        hist-cinematica
-        hist-cinematica-${
-          config.efeito ||
-          'normal'
-        }
-        ${
-          saindo
-            ? 'saindo'
-            : ''
-        }
-      `}
-
-      style={{
-        '--duracao-cinematica':
-          `${duracao}ms`,
-      }}
-    >
-
-     <div className="hist-cinematica-camera">
-
-  {config.video ? (
-
-    <video
-      className="
-        hist-cinematica-img
-        hist-cinematica-video
-      "
-
-      src={config.video}
-
-      poster={
-        config.imagemFallback
-      }
-
-      autoPlay
-      muted
-      playsInline
-      loop
-      preload="auto"
-    />
-
-  ) : (
-
-    <img
-      className="hist-cinematica-img"
-
-      src={config.imagem}
-
-      alt=""
-
-      draggable="false"
-    />
-
-  )}
-
-</div>
-
-
-      <div className="hist-cinematica-luzes" />
-
-      <div className="hist-cinematica-brilho" />
-
-      <div className="hist-cinematica-glitch" />
-
-      <div className="hist-cinematica-vinheta" />
-
-
-      <div
         className="
-          hist-cinema-bar
-          hist-cinema-bar-top
+          hist-intro-pular
         "
-      />
 
-      <div
-        className="
-          hist-cinema-bar
-          hist-cinema-bar-bottom
-        "
-      />
-
-
-      {(
-        config.titulo ||
-        config.subtitulo
-      ) && (
-
-        <div className="hist-cinematica-legenda">
-
-          {config.titulo && (
-            <strong>
-              {config.titulo}
-            </strong>
-          )}
-
-          {config.subtitulo && (
-            <span>
-              {config.subtitulo}
-            </span>
-          )}
-
-        </div>
-
-      )}
-
-
-      <button
-        type="button"
-
-        className="hist-cinematica-pular"
-
-        onClick={finalizar}
+        onClick={
+          finalizar
+        }
       >
         Pular
       </button>
@@ -576,7 +578,8 @@ function Balao({
       className={`
         hist-balao
         hist-balao-${
-          quem === 'narrador'
+          quem ===
+          'narrador'
             ? 'narrador'
             : lado
         }
@@ -587,18 +590,30 @@ function Balao({
           personagem.cor,
       }}
 
-      onClick={onClick}
+      onClick={
+        onClick
+      }
     >
 
       {personagem.nome && (
-        <span className="hist-balao-nome">
-          {personagem.nome}
+        <span
+          className="
+            hist-balao-nome
+          "
+        >
+          {
+            personagem.nome
+          }
         </span>
       )}
 
 
       {texto && (
-        <p className="hist-balao-texto">
+        <p
+          className="
+            hist-balao-texto
+          "
+        >
           {texto}
         </p>
       )}
@@ -621,14 +636,22 @@ function Celular({
 }) {
   return (
     <div
-      className="hist-celular"
-
-      aria-label="Tela do celular encontrado"
+      className="
+        hist-celular
+      "
     >
 
-      <div className="hist-celular-tela">
+      <div
+        className="
+          hist-celular-tela
+        "
+      >
 
-        <div className="hist-celular-topo">
+        <div
+          className="
+            hist-celular-topo
+          "
+        >
           <span>
             20:47
           </span>
@@ -639,12 +662,20 @@ function Celular({
         </div>
 
 
-        <span className="hist-celular-de">
+        <span
+          className="
+            hist-celular-de
+          "
+        >
           {de}
         </span>
 
 
-        <p className="hist-celular-msg">
+        <p
+          className="
+            hist-celular-msg
+          "
+        >
           {texto}
         </p>
 
@@ -656,86 +687,199 @@ function Celular({
 
 
 // ================================================================
-// REVELAÇÃO FINAL
+// TELA FINAL
 // ================================================================
 
-function RevelacaoFinal({
+function TelaFinal({
   final,
   onContinuar,
 }) {
   return (
-    <div className="hist-revelacao-final">
+    <div
+      className="
+        hist-final
+      "
+    >
 
-      {final?.video ? (
+      <div
+        className="
+          hist-final-grid
+        "
+      />
 
-        <video
-          className="hist-revelacao-final-video"
 
-          src={final.video}
+      <div
+        className="
+          hist-final-brilho
+        "
+      />
 
-          poster={final.imagem}
 
-          autoPlay
-          muted
-          playsInline
-          loop
-          preload="auto"
+      <div
+        className="
+          hist-final-scan
+        "
+      />
+
+
+      <div
+        className="
+          hist-final-conteudo
+        "
+      >
+
+        <span
+          className="
+            hist-final-status
+          "
+        >
+          INCIDENTE CONTIDO
+        </span>
+
+
+        <span
+          className="
+            hist-final-kicker
+          "
+        >
+          {final?.kicker}
+        </span>
+
+
+        <h1>
+          {final?.titulo}
+        </h1>
+
+
+        <div
+          className="
+            hist-final-linha
+          "
         />
 
-      ) : final?.imagem ? (
 
-        <img
-          className="hist-revelacao-final-video"
-
-          src={final.imagem}
-
-          alt=""
-
-          draggable="false"
-        />
-
-      ) : null}
+        <p>
+          {final?.subtitulo}
+        </p>
 
 
-      <div className="hist-revelacao-final-overlay" />
-
-
-      <div className="hist-revelacao-final-conteudo">
-
-        {final?.kicker && (
+        <div
+          className="
+            hist-final-meta
+          "
+        >
           <span>
-            {final.kicker}
+            INVESTIGAÇÃO 01
           </span>
-        )}
 
+          <i />
 
-        {final?.titulo && (
-          <h2>
-            {final.titulo}
-          </h2>
-        )}
+          <span>
+            PARAÍSO
+          </span>
 
+          <i />
 
-        {final?.subtitulo && (
-          <p>
-            {final.subtitulo}
-          </p>
-        )}
+          <span>
+            ZERO TRUST
+          </span>
+        </div>
 
 
         <button
           type="button"
 
-          className="hist-revelacao-final-botao"
+          className="
+            hist-final-botao
+          "
 
-          onClick={onContinuar}
+          onClick={
+            onContinuar
+          }
         >
-          Concluir fase
+          CONCLUIR FASE
         </button>
 
       </div>
 
     </div>
+  )
+}
+
+
+// ================================================================
+// DUPLAS DINÂMICAS
+// ================================================================
+
+const DUPLA_ALUNOS = [
+  {
+    id: 'murilo',
+    lado: 'esq',
+  },
+
+  {
+    id: 'vitor',
+    lado: 'dir',
+  },
+]
+
+
+const DUPLA_PROFESSORES = [
+  {
+    id: 'cleiton',
+    lado: 'esq',
+  },
+
+  {
+    id: 'fabio',
+    lado: 'dir',
+  },
+]
+
+
+function obterElencoVisivel(
+  cena,
+  fala,
+  emFalas
+) {
+  if (
+    !cena.elencoDinamico
+  ) {
+    return (
+      cena.elenco ||
+      []
+    )
+  }
+
+
+  if (
+    emFalas &&
+    fala
+  ) {
+    if (
+      fala.quem ===
+        'murilo' ||
+      fala.quem ===
+        'vitor'
+    ) {
+      return DUPLA_ALUNOS
+    }
+
+
+    if (
+      fala.quem ===
+        'cleiton' ||
+      fala.quem ===
+        'fabio'
+    ) {
+      return DUPLA_PROFESSORES
+    }
+  }
+
+
+  return (
+    cena.elenco ||
+    DUPLA_PROFESSORES
   )
 }
 
@@ -754,14 +898,6 @@ function Cena({
   onFimCena,
   onSair,
 }) {
-  const [
-    cinematicaFeita,
-    setCinematicaFeita,
-  ] = useState(
-    !cena.cinematica
-  )
-
-
   const [
     falaIdx,
     setFalaIdx,
@@ -786,34 +922,12 @@ function Cena({
   ] = useState(false)
 
 
-  const escolha =
-    cena.escolha
-
-
-  const ordem =
-    useMemo(
-      () => {
-        if (!escolha) {
-          return []
-        }
-
-        return embaralhar(
-          escolha.alternativas.map(
-            (_, indiceAlternativa) =>
-              indiceAlternativa
-          )
-        )
-      },
-
-      [
-        cena.id,
-        escolha,
-      ]
-    )
-
-
   const falas =
     cena.falas || []
+
+
+  const escolha =
+    cena.escolha
 
 
   const emFalas =
@@ -829,24 +943,79 @@ function Cena({
 
   const efeito =
     useDigitando(
-      cinematicaFeita
-        ? fala?.texto
-        : ''
+      fala?.texto ||
+      ''
     )
 
 
-  const ladoDe = (id) =>
-    cena.elenco?.find(
-      (personagem) =>
-        personagem.id === id
-    )?.lado || 'esq'
+  const ordem =
+    useMemo(
+      () => {
+        if (!escolha) {
+          return []
+        }
+
+
+        return embaralhar(
+          escolha
+            .alternativas
+            .map(
+              (_, i) =>
+                i
+            )
+        )
+      },
+
+      [
+        cena.id,
+        escolha,
+      ]
+    )
+
+
+  const elencoVisivel =
+    obterElencoVisivel(
+      cena,
+      fala,
+      emFalas
+    )
+
+
+  function ladoDe(id) {
+    const atual =
+      elencoVisivel.find(
+        (personagem) =>
+          personagem.id ===
+          id
+      )
+
+
+    if (atual) {
+      return atual.lado
+    }
+
+
+    if (
+      id === 'vitor' ||
+      id === 'fabio'
+    ) {
+      return 'dir'
+    }
+
+
+    return 'esq'
+  }
 
 
   function terminarCena() {
     if (cena.final) {
-      setMostrarFinal(true)
+      setMostrarFinal(
+        true
+      )
+
       return
     }
+
 
     onFimCena()
   }
@@ -880,10 +1049,14 @@ function Cena({
 
 
   function avancar() {
-    if (!efeito.completo) {
+    if (
+      !efeito.completo
+    ) {
       efeito.pular()
+
       return
     }
+
 
     proximaFala()
   }
@@ -893,7 +1066,8 @@ function Cena({
     indiceOriginal
   ) {
     if (
-      selecionada !== null
+      selecionada !==
+      null
     ) {
       return
     }
@@ -938,13 +1112,16 @@ function Cena({
       })
 
 
-      aoPontuar?.(data)
+      aoPontuar?.(
+        data
+      )
 
     } catch (erro) {
       console.error(
         'Erro ao registrar resposta da história:',
         erro
       )
+
 
       setResultado({
         acertou,
@@ -955,10 +1132,6 @@ function Cena({
 
 
   function poseDe(id) {
-    // ------------------------------------------------------------
-    // Resultado de uma pergunta
-    // ------------------------------------------------------------
-
     if (
       resultado &&
       escolha
@@ -967,18 +1140,16 @@ function Cena({
         id ===
         escolha.resposta_quem
       ) {
-        return resultado.acertou
-          ? 'acerto'
-          : 'erro'
+        return (
+          resultado.acertou
+            ? 'acerto'
+            : 'erro'
+        )
       }
 
       return 'neutro'
     }
 
-
-    // ------------------------------------------------------------
-    // Momento da escolha
-    // ------------------------------------------------------------
 
     if (
       !emFalas &&
@@ -991,6 +1162,7 @@ function Cena({
         return 'resposta'
       }
 
+
       if (
         id ===
         escolha.quem
@@ -998,25 +1170,24 @@ function Cena({
         return 'pergunta'
       }
 
+
       return 'neutro'
     }
 
-
-    // ------------------------------------------------------------
-    // Diálogo normal
-    // ------------------------------------------------------------
 
     if (
       fala &&
       fala.quem === id
     ) {
+      if (fala.pose) {
+        return fala.pose
+      }
+
+
       return (
-        fala.pose ||
-        (
-          efeito.completo
-            ? 'neutro'
-            : 'fala'
-        )
+        efeito.completo
+          ? 'neutro'
+          : 'fala'
       )
     }
 
@@ -1028,7 +1199,8 @@ function Cena({
   const destaque =
     emFalas &&
     fala &&
-    fala.quem !== 'narrador'
+    fala.quem !==
+      'narrador'
       ? fala.quem
       : null
 
@@ -1036,41 +1208,49 @@ function Cena({
   const falandoId =
     emFalas &&
     fala &&
-    fala.quem !== 'narrador' &&
+    fala.quem !==
+      'narrador' &&
     !efeito.completo
       ? fala.quem
       : null
 
 
   // ==============================================================
-  // CINEMÁTICA
+  // BOSS
   // ==============================================================
 
-  if (!cinematicaFeita) {
-    return createPortal(
-      <div className="hist-cena">
+  if (
+    cena.tipo ===
+    'boss'
+  ) {
+    return (
+      <BossBattle
+        token={
+          token
+        }
 
-        <CinematicaImagem
-          config={
-            cena.cinematica
-          }
+        categoriaSlug={
+          fase.categoria_slug
+        }
 
-          onFim={() =>
-            setCinematicaFeita(
-              true
-            )
-          }
-        />
+        aoPontuar={
+          aoPontuar
+        }
 
-      </div>,
+        onSair={
+          onSair
+        }
 
-      document.body
+        onVitoria={
+          onFimCena
+        }
+      />
     )
   }
 
 
   // ==============================================================
-  // TELA FINAL
+  // FINAL
   // ==============================================================
 
   if (mostrarFinal) {
@@ -1082,8 +1262,10 @@ function Cena({
         "
       >
 
-        <RevelacaoFinal
-          final={cena.final}
+        <TelaFinal
+          final={
+            cena.final
+          }
 
           onContinuar={
             onFimCena
@@ -1097,13 +1279,28 @@ function Cena({
   }
 
 
+  const local =
+    (
+      cena.id ===
+        'manha-seguinte' ||
+      cena.id ===
+        'cleiton-ja-sabia' ||
+      cena.id ===
+        'zero-trust'
+    )
+      ? 'FACULDADE'
+      : 'PARAÍSO'
+
+
   // ==============================================================
   // CENA NORMAL
   // ==============================================================
 
   return createPortal(
     <div
-      className="hist-cena"
+      className="
+        hist-cena
+      "
 
       role="region"
 
@@ -1113,82 +1310,106 @@ function Cena({
     >
 
       <Fundo
-        src={cena.fundo}
+        src={
+          cena.fundo
+        }
       />
 
 
-      <div className="hist-vinheta" />
+      <div
+        className="
+          hist-vinheta
+        "
+      />
 
 
-      {!cena.cinematica?.semHud && (
-        <div className="hist-hud">
+      <div
+        className="
+          hist-hud
+        "
+      >
 
-          <button
-            type="button"
+        <button
+          type="button"
 
-            className="hist-voltar"
+          className="
+            hist-voltar
+          "
 
-            onClick={onSair}
+          onClick={
+            onSair
+          }
+        >
+          Sair da fase
+        </button>
+
+
+        <div
+          className="
+            hist-hud-centro
+          "
+        >
+
+          <span
+            className="
+              hist-hud-label
+            "
           >
-            Sair da fase
-          </button>
-
-
-          <div className="hist-hud-centro">
-
-            <span className="hist-hud-label">
-              INVESTIGAÇÃO 01
-            </span>
-
-            <span className="hist-hud-local">
-              PARAÍSO
-            </span>
-
-          </div>
+            INVESTIGAÇÃO 01
+          </span>
 
 
           <span
-            className="hist-progresso"
-
-            aria-label={
-              `Cena ${indice + 1} de ${total}`
-            }
+            className="
+              hist-hud-local
+            "
           >
-
-            {Array.from(
-              {
-                length: total,
-              },
-
-              (_, i) => (
-                <span
-                  key={i}
-
-                  className={`
-                    hist-ponto
-                    ${
-                      i < indice
-                        ? 'feito'
-                        : i === indice
-                          ? 'atual'
-                          : ''
-                    }
-                  `}
-                />
-              )
-            )}
-
+            {local}
           </span>
 
         </div>
-      )}
 
 
-      {cena.elenco?.map(
+        <span
+          className="
+            hist-progresso
+          "
+        >
+
+          {Array.from(
+            {
+              length:
+                total,
+            },
+
+            (_, i) => (
+              <span
+                key={i}
+
+                className={`
+                  hist-ponto
+                  ${
+                    i < indice
+                      ? 'feito'
+                      : i === indice
+                        ? 'atual'
+                        : ''
+                  }
+                `}
+              />
+            )
+          )}
+
+        </span>
+
+      </div>
+
+
+      {elencoVisivel.map(
         (personagem) => (
           <Sprite
             key={
-              personagem.id
+              `${cena.id}-${personagem.id}`
             }
 
             id={
@@ -1206,7 +1427,8 @@ function Cena({
             }
 
             ativo={
-              destaque === null ||
+              destaque ===
+                null ||
               destaque ===
                 personagem.id
             }
@@ -1234,7 +1456,9 @@ function Cena({
 
 
       <div
-        className="hist-falas"
+        className="
+          hist-interface
+        "
 
         aria-live="polite"
       >
@@ -1268,13 +1492,18 @@ function Cena({
               <button
                 type="button"
 
-                className="hist-continuar"
+                className="
+                  hist-continuar
+                "
 
-                onClick={(evento) => {
-                  evento.stopPropagation()
+                onClick={
+                  (evento) => {
+                    evento
+                      .stopPropagation()
 
-                  proximaFala()
-                }}
+                    proximaFala()
+                  }
+                }
               >
                 Continuar
               </button>
@@ -1307,12 +1536,14 @@ function Cena({
 
               <Balao
                 quem={
-                  escolha.resposta_quem
+                  escolha
+                    .resposta_quem
                 }
 
                 lado={
                   ladoDe(
-                    escolha.resposta_quem
+                    escolha
+                      .resposta_quem
                   )
                 }
 
@@ -1324,21 +1555,23 @@ function Cena({
               >
 
                 <div
-                  className="hist-alternativas"
-
-                  role="group"
-
-                  aria-label="Escolha a resposta"
+                  className="
+                    hist-alternativas
+                  "
                 >
 
                   {ordem.map(
                     (i) => {
                       const estado =
-                        selecionada === null
+                        selecionada ===
+                        null
                           ? ''
-                          : i === escolha.correta
+                          : i ===
+                              escolha
+                                .correta
                             ? 'correta'
-                            : i === selecionada
+                            : i ===
+                                selecionada
                               ? 'incorreta'
                               : 'neutra'
 
@@ -1355,11 +1588,14 @@ function Cena({
                           `}
 
                           disabled={
-                            selecionada !== null
+                            selecionada !==
+                            null
                           }
 
                           onClick={() =>
-                            escolher(i)
+                            escolher(
+                              i
+                            )
                           }
                         >
                           {
@@ -1379,7 +1615,8 @@ function Cena({
                     className={`
                       hist-feedback
                       ${
-                        resultado.acertou
+                        resultado
+                          .acertou
                           ? 'certo'
                           : 'errado'
                       }
@@ -1388,7 +1625,8 @@ function Cena({
 
                     <strong>
                       {
-                        resultado.acertou
+                        resultado
+                          .acertou
                           ? 'Acertou!'
                           : 'Resposta incorreta.'
                       }
@@ -1397,7 +1635,8 @@ function Cena({
 
                     <p>
                       {
-                        escolha.explicacao
+                        escolha
+                          .explicacao
                       }
                     </p>
 
@@ -1405,7 +1644,8 @@ function Cena({
                     {resultado.extra && (
                       <small>
                         {
-                          resultado.extra
+                          resultado
+                            .extra
                         }
                       </small>
                     )}
@@ -1414,7 +1654,9 @@ function Cena({
                     <button
                       type="button"
 
-                      className="hist-continuar"
+                      className="
+                        hist-continuar
+                      "
 
                       onClick={
                         terminarCena
@@ -1441,7 +1683,7 @@ function Cena({
 
 
 // ================================================================
-// HISTÓRIA
+// PRINCIPAL
 // ================================================================
 
 export default function Historia({
@@ -1467,7 +1709,10 @@ export default function Historia({
   ] = useState(false)
 
 
-  const jogando = Boolean(faseAtual)
+  const jogando =
+    Boolean(
+      faseAtual
+    )
 
 
   useEffect(() => {
@@ -1476,59 +1721,98 @@ export default function Historia({
     }
 
 
-    const overflowAnterior =
-      document.body.style.overflow
+    const anterior =
+      document.body
+        .style
+        .overflow
 
 
-    document.body.style.overflow =
-      'hidden'
+    document.body
+      .style
+      .overflow =
+        'hidden'
 
 
     return () => {
-      document.body.style.overflow =
-        overflowAnterior
+      document.body
+        .style
+        .overflow =
+          anterior
     }
 
   }, [jogando])
 
 
-  function iniciar(fase) {
-    setFaseAtual(fase)
+  function iniciar(
+    fase
+  ) {
+    // Carrega fundo-sala e demais
+    // imagens antes de chegar nelas.
+    preloadFase(
+      fase
+    )
 
-    setCenaIdx(0)
+
+    setFaseAtual(
+      fase
+    )
+
+
+    setCenaIdx(
+      0
+    )
+
 
     setIntroPendente(
-      Boolean(fase.intro)
+      Boolean(
+        fase.intro
+      )
     )
   }
 
 
   function voltarParaFases() {
-    setFaseAtual(null)
+    setFaseAtual(
+      null
+    )
 
-    setCenaIdx(0)
+    setCenaIdx(
+      0
+    )
 
-    setIntroPendente(false)
+    setIntroPendente(
+      false
+    )
   }
 
 
-  // ==============================================================
-  // LISTA DE FASES
-  // ==============================================================
-
   if (!faseAtual) {
     return (
-      <section className="historia">
+      <section
+        className="
+          historia
+        "
+      >
 
-        <div className="hist-topo">
+        <div
+          className="
+            hist-topo
+          "
+        >
 
-          <span className="hist-topo-kicker">
+          <span
+            className="
+              hist-topo-kicker
+            "
+          >
             CYBERSHIELD
           </span>
+
 
           <h2>
             Modo História
           </h2>
+
 
           <p>
             Investigue incidentes,
@@ -1540,45 +1824,73 @@ export default function Historia({
         </div>
 
 
-        <div className="hist-fases">
+        <div
+          className="
+            hist-fases
+          "
+        >
 
           {FASES.map(
-            (fase, indice) => (
+            (
+              fase,
+              indice
+            ) => (
+
               <button
-                key={fase.id}
+                key={
+                  fase.id
+                }
 
                 type="button"
 
-                className="hist-fase-card"
+                className="
+                  hist-fase-card
+                "
 
                 disabled={
                   !fase.disponivel
                 }
 
                 onClick={() =>
-                  iniciar(fase)
+                  iniciar(
+                    fase
+                  )
                 }
               >
 
                 <span
-                  className="hist-fase-icone"
-
-                  aria-hidden="true"
+                  className="
+                    hist-fase-icone
+                  "
                 >
-                  {fase.icone}
+                  {
+                    fase.icone
+                  }
                 </span>
 
 
-                <span className="hist-fase-info">
+                <span
+                  className="
+                    hist-fase-info
+                  "
+                >
 
                   <strong>
-                    Fase {indice + 1}:{' '}
-                    {fase.titulo}
+                    Fase {
+                      indice + 1
+                    }:{' '}
+                    {
+                      fase.titulo
+                    }
                   </strong>
 
+
                   <small>
-                    {fase.modulo}
+                    {
+                      fase.modulo
+                    }
                   </small>
+
 
                   <em>
                     {
@@ -1591,6 +1903,7 @@ export default function Historia({
                 </span>
 
               </button>
+
             )
           )}
 
@@ -1600,9 +1913,13 @@ export default function Historia({
         <button
           type="button"
 
-          className="hist-voltar"
+          className="
+            hist-voltar
+          "
 
-          onClick={onSair}
+          onClick={
+            onSair
+          }
         >
           Voltar para as áreas
         </button>
@@ -1612,16 +1929,16 @@ export default function Historia({
   }
 
 
-  // ==============================================================
-  // INTRO-METRO.MP4
-  // ==============================================================
-
   if (
     introPendente &&
     faseAtual.intro
   ) {
     return createPortal(
-      <div className="hist-cena">
+      <div
+        className="
+          hist-cena
+        "
+      >
 
         <IntroVideo
           src={
@@ -1642,14 +1959,17 @@ export default function Historia({
   }
 
 
-
-
   const cenas =
     faseAtual.cenas
 
 
   const cenaAtual =
     cenas[cenaIdx]
+
+
+  if (!cenaAtual) {
+    return null
+  }
 
 
   return (
@@ -1691,14 +2011,25 @@ export default function Historia({
           cenaIdx + 1 <
           cenas.length
         ) {
+          // Pré-carrega explicitamente
+          // o fundo da próxima cena.
+          preloadImagem(
+            cenas[
+              cenaIdx + 1
+            ]?.fundo
+          )
+
+
           setCenaIdx(
             (atual) =>
               atual + 1
           )
 
-        } else {
-          voltarParaFases()
+          return
         }
+
+
+        voltarParaFases()
       }}
     />
   )

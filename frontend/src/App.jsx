@@ -214,6 +214,77 @@ const PERSONAGENS_CYBER = [
     descricao: 'Professor de perfil extremamente técnico. O Bruxo domina sistemas, Linux e análise aprofundada, com atributos altos em praticamente todas as áreas.',
     atributos: { phishing: 8, threat: 9, malware: 9, web: 9, defesa: 9, sistemas: 10 }
   },
+  {
+    id: 'mizuguchi',
+    nome: 'Mizuguchi',
+    apelido: 'Pantera',
+    tipo: 'ALUNO',
+    nivel: 3,
+
+    especialidade:
+      'Threat Hunting / Stealth Recon',
+
+    imagem:
+      '/historia/personagens/mizuguchi/perfil.png',
+
+    cor: '#a855f7',
+
+    icone: '🐆',
+
+    habilidade:
+      'Pantera Sombria',
+
+    habilidadeDesc:
+      'Usa reconhecimento silencioso e análise de comportamento para seguir rastros, detectar anomalias e encontrar ameaças que tentam permanecer escondidas.',
+
+    descricao:
+      'Mizuguchi possui um perfil silencioso e observador. Sua especialidade é caçar ameaças discretamente, acompanhar rastros e perceber comportamentos anormais antes que o atacante revele sua posição.',
+
+    atributos: {
+      phishing: 4,
+      threat: 7,
+      malware: 5,
+      web: 5,
+      defesa: 6,
+      sistemas: 6,
+    },
+  },
+
+  {
+    id: 'jb',
+    nome: 'JB',
+    apelido: 'Operador',
+    tipo: 'ALUNO',
+    nivel: 3,
+
+    especialidade:
+      'Infraestrutura / Segurança Operacional',
+
+    imagem:
+      '/historia/personagens/jb/perfil.png',
+
+    cor: '#8fa36a',
+
+    icone: '🎒',
+
+    habilidade:
+      'Protocolo de Campo',
+
+    habilidadeDesc:
+      'Analisa o ambiente de forma metódica, identifica pontos críticos da infraestrutura e mantém a operação organizada mesmo sob pressão.',
+
+    descricao:
+      'JB possui um perfil disciplinado e operacional. Sua maior força está em sistemas, infraestrutura e defesa, tratando incidentes como operações que precisam de reconhecimento, organização e execução precisa.',
+
+    atributos: {
+      phishing: 4,
+      threat: 5,
+      malware: 5,
+      web: 4,
+      defesa: 7,
+      sistemas: 7,
+    },
+  },
 ]
 
 const ATRIBUTOS_PERSONAGEM = [

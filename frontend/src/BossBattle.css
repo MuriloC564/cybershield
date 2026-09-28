@@ -1,0 +1,1635 @@
+/* ================================================================
+   CYBERSHIELD — BOSS BATTLE
+   ================================================================ */
+
+.pkm-battle {
+  position: fixed !important;
+  inset: 0 !important;
+
+  z-index: 999999 !important;
+
+  width: 100vw !important;
+  height: 100vh !important;
+
+  overflow: hidden !important;
+
+  background: #05070d;
+
+  color: #fff;
+
+  font-family:
+    "Courier New",
+    "JetBrains Mono",
+    monospace;
+
+  isolation: isolate;
+}
+
+
+/* ================================================================
+   FUNDO
+   ================================================================ */
+
+.pkm-background {
+  position: absolute;
+  inset: 0;
+
+  z-index: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+.pkm-vignette {
+  position: absolute;
+  inset: 0;
+
+  z-index: 1;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, .08),
+      transparent 35%,
+      rgba(0, 0, 0, .15)
+    ),
+    radial-gradient(
+      ellipse at center,
+      transparent 55%,
+      rgba(0, 0, 0, .22)
+    );
+}
+
+
+/* ================================================================
+   SAIR
+   ================================================================ */
+
+.pkm-exit {
+  position: absolute;
+
+  z-index: 200;
+
+  top: 18px;
+  left: 20px;
+
+  padding: 9px 15px;
+
+  color: #fff;
+
+  border: 2px solid #69758b;
+  border-radius: 5px;
+
+  background: rgba(7, 11, 20, .9);
+
+  font: 900 13px "Courier New", monospace;
+
+  cursor: pointer;
+}
+
+
+/* ================================================================
+   COMBO
+   ================================================================ */
+
+.pkm-combo {
+  position: absolute;
+
+  z-index: 200;
+
+  top: 20px;
+  right: 25px;
+
+  text-align: right;
+}
+
+.pkm-combo span {
+  display: block;
+
+  color: #d6dce8;
+
+  font-size: 11px;
+  font-weight: 900;
+
+  letter-spacing: .18em;
+}
+
+.pkm-combo strong {
+  display: block;
+
+  color: #2de2e6;
+
+  font-size: 28px;
+}
+
+
+/* ================================================================
+   HUD
+   ================================================================ */
+
+.pkm-hp-card {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 12px 17px;
+
+  color: #111827;
+
+  border: 5px solid #263044;
+
+  border-radius:
+    4px 4px 15px 4px;
+
+  background:
+    linear-gradient(
+      #fff,
+      #e1e5eb
+    );
+
+  box-shadow:
+    6px 7px 0
+    rgba(0, 0, 0, .55);
+}
+
+.pkm-hp-top {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+}
+
+.pkm-hp-top strong {
+  overflow: hidden;
+
+  font-size:
+    clamp(
+      17px,
+      1.4vw,
+      27px
+    );
+
+  font-weight: 900;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+}
+
+.pkm-hp-top span {
+  font-size:
+    clamp(
+      13px,
+      1vw,
+      19px
+    );
+
+  font-weight: 900;
+}
+
+.pkm-hp-row {
+  display: grid;
+
+  grid-template-columns:
+    auto 1fr;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-top: 7px;
+}
+
+.pkm-hp-row b {
+  color: #e52d43;
+
+  font-size: 18px;
+}
+
+.pkm-hp-track {
+  overflow: hidden;
+
+  height: 16px;
+
+  padding: 2px;
+
+  box-sizing: border-box;
+
+  border: 3px solid #1a2230;
+  border-radius: 999px;
+
+  background: #313c4d;
+}
+
+.pkm-hp-track i {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      #83ff9b,
+      #16c95c
+    );
+
+  transition: width .35s ease;
+}
+
+.pkm-hp-track i.alerta {
+  background:
+    linear-gradient(
+      #ffe76a,
+      #e9a817
+    );
+}
+
+.pkm-hp-track i.critico {
+  background:
+    linear-gradient(
+      #ff737e,
+      #e3283d
+    );
+}
+
+.pkm-hp-value {
+  margin-top: 4px;
+
+  text-align: right;
+
+  font-size: 17px;
+  font-weight: 900;
+}
+
+
+/* ================================================================
+   HUD DO BOSS
+   ================================================================ */
+
+.pkm-boss-hud {
+  position: absolute;
+
+  z-index: 50;
+
+  top: 6.5vh;
+  left: 4.5vw;
+
+  width:
+    min(
+      570px,
+      38vw
+    );
+}
+
+
+/* ================================================================
+   BOSS
+   ================================================================ */
+
+.pkm-boss-stage {
+  position: absolute;
+
+  z-index: 12;
+
+  top: 4vh;
+  right: 4vw;
+
+  width: 56vw;
+  height: 64vh;
+
+  display: flex;
+
+  align-items: flex-end;
+  justify-content: center;
+
+  pointer-events: none;
+}
+
+.pkm-boss-sprite {
+  display: block;
+
+  width: auto;
+
+  height:
+    min(
+      65vh,
+      750px
+    );
+
+  max-width: 100%;
+
+  object-fit: contain;
+
+  transform-origin:
+    center bottom;
+
+  filter:
+    drop-shadow(
+      0 22px 18px
+      rgba(0, 0, 0, .62)
+    );
+}
+
+
+/* ================================================================
+   DUPLA
+   ================================================================ */
+
+.pkm-party-stage {
+  position: absolute;
+
+  z-index: 22;
+
+  left: 0;
+
+  bottom: 20vh;
+
+  width: 64vw;
+  height: 55vh;
+
+  overflow: hidden;
+
+  pointer-events: none;
+}
+
+.pkm-fighter {
+  position: absolute;
+
+  bottom: -16vh;
+
+  display: flex;
+
+  align-items: flex-end;
+  justify-content: center;
+
+  transform-origin:
+    center bottom;
+}
+
+.pkm-fighter-murilo {
+  z-index: 3;
+
+  left: -2vw;
+}
+
+.pkm-fighter-vitor {
+  z-index: 4;
+
+  left: 23vw;
+}
+
+.pkm-fighter-sprite {
+  display: block;
+
+  width: auto;
+
+  height:
+    min(
+      67vh,
+      770px
+    );
+
+  max-width: none;
+
+  object-fit: contain;
+
+  transform-origin:
+    center bottom;
+
+  filter:
+    drop-shadow(
+      0 18px 15px
+      rgba(0, 0, 0, .6)
+    );
+}
+
+
+/* ================================================================
+   SPRITE DE HABILIDADE
+   ================================================================ */
+
+.pkm-fighter.usando-sprite-tecnica {
+  z-index: 40;
+}
+
+/*
+ * A imagem da habilidade é maior.
+ * Ela fica muito mais visível que o
+ * antigo sprite de corpo inteiro.
+ */
+
+.pkm-technique-sprite {
+  height:
+    min(
+      78vh,
+      900px
+    );
+
+  max-width: 58vw;
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(
+      0 24px 18px
+      rgba(0, 0, 0, .7)
+    )
+    drop-shadow(
+      0 0 22px
+      rgba(255, 30, 50, .3)
+    );
+}
+
+
+/*
+ * Quando Murilo usa técnica, ele avança
+ * visualmente para o centro da tela.
+ */
+
+.tem-tecnica-ativa
+.pkm-fighter-murilo.usando-sprite-tecnica {
+  left: 8vw;
+
+  bottom: -11vh;
+}
+
+
+/*
+ * Vitor faz a mesma coisa.
+ */
+
+.tem-tecnica-ativa
+.pkm-fighter-vitor.usando-sprite-tecnica {
+  left: 15vw;
+
+  bottom: -11vh;
+}
+
+
+/*
+ * O parceiro que NÃO está usando técnica
+ * fica um pouco mais escuro.
+ */
+
+.tem-tecnica-ativa
+.pkm-fighter:not(.usando-sprite-tecnica) {
+  filter:
+    brightness(.58);
+
+  transform:
+    scale(.93);
+}
+
+
+/* ================================================================
+   HUD DA DUPLA
+   ================================================================ */
+
+.pkm-party-hud {
+  position: absolute;
+
+  z-index: 52;
+
+  right: 4vw;
+  bottom: 23vh;
+
+  width:
+    min(
+      500px,
+      32vw
+    );
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 17px;
+}
+
+
+/* ================================================================
+   PAINEL INFERIOR
+   ================================================================ */
+
+.pkm-command-panel {
+  position: absolute;
+
+  z-index: 100;
+
+  left: .8vw;
+  right: .8vw;
+  bottom: 1vh;
+
+  height: 21vh;
+
+  min-height: 190px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.48fr)
+    minmax(0, 1fr);
+
+  gap: 10px;
+}
+
+
+/* ================================================================
+   DIÁLOGO
+   ================================================================ */
+
+.pkm-dialogue-box {
+  position: relative;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+
+  padding: 23px 30px;
+
+  border: 6px solid #edf2fa;
+
+  border-radius: 5px;
+
+  outline: 5px solid #202b41;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(21, 31, 54, .98),
+      rgba(7, 12, 24, .99)
+    );
+
+  box-shadow:
+    7px 8px 0
+    rgba(0, 0, 0, .62);
+}
+
+.pkm-label {
+  display: block;
+
+  margin-bottom: 10px;
+
+  color: #2de2e6;
+
+  font-size: 11px;
+  font-weight: 900;
+
+  letter-spacing: .16em;
+}
+
+.pkm-dialogue-box h2 {
+  margin: 0;
+
+  color: #fff;
+
+  font-size:
+    clamp(
+      18px,
+      1.25vw,
+      25px
+    );
+
+  line-height: 1.35;
+}
+
+.pkm-dialogue-box p {
+  margin: 12px 0 0;
+
+  color: #c6cede;
+
+  font-size:
+    clamp(
+      13px,
+      .9vw,
+      17px
+    );
+
+  font-weight: 700;
+
+  line-height: 1.4;
+}
+
+.pkm-dialogue-arrow {
+  position: absolute;
+
+  right: 22px;
+  bottom: 17px;
+
+  font-size: 20px;
+
+  animation:
+    pkmArrow
+    .65s ease-in-out
+    infinite alternate;
+}
+
+
+/* ================================================================
+   OPÇÕES
+   ================================================================ */
+
+.pkm-options {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 8px;
+
+  box-sizing: border-box;
+
+  padding: 9px;
+
+  overflow: auto;
+
+  border: 6px solid #202b41;
+
+  border-radius: 5px;
+
+  background:
+    linear-gradient(
+      #f8f9fb,
+      #e3e7ed
+    );
+
+  box-shadow:
+    7px 8px 0
+    rgba(0, 0, 0, .62);
+}
+
+.pkm-options button {
+  min-width: 0;
+  min-height: 70px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 10px 14px;
+
+  color: #111827;
+
+  border: 4px solid #9ca7ba;
+  border-radius: 3px;
+
+  background:
+    linear-gradient(
+      #fff,
+      #e8ebef
+    );
+
+  font-family:
+    "Courier New",
+    monospace;
+
+  font-size:
+    clamp(
+      12px,
+      .85vw,
+      16px
+    );
+
+  font-weight: 900;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.pkm-options button:hover:not(:disabled) {
+  border-color: #ef233c;
+
+  transform:
+    translateY(-2px);
+}
+
+.pkm-option-arrow {
+  flex: 0 0 auto;
+
+  color: transparent;
+}
+
+.pkm-options
+button:hover:not(:disabled)
+.pkm-option-arrow {
+  color: #ef233c;
+}
+
+.pkm-options button.correta {
+  border-color: #1ebf5b;
+
+  background: #c9f2d4;
+}
+
+.pkm-options button.correta
+.pkm-option-arrow {
+  color: #149846;
+}
+
+.pkm-options button.errada {
+  border-color: #e82e43;
+
+  background: #ffcbd2;
+}
+
+.pkm-options button.errada
+.pkm-option-arrow {
+  color: #e82e43;
+}
+
+.pkm-options button.neutra {
+  opacity: .45;
+}
+
+
+/* ================================================================
+   TÉCNICAS
+   ================================================================ */
+
+.pkm-techniques button {
+  min-height: 80px;
+}
+
+.pkm-tech-text {
+  min-width: 0;
+
+  display: flex;
+
+  flex: 1;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.pkm-tech-text strong {
+  font-size: 14px;
+}
+
+.pkm-tech-text small {
+  overflow: hidden;
+
+  color: #687387;
+
+  font-size: 9px;
+
+  line-height: 1.25;
+
+  display: -webkit-box;
+
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.pkm-tech-damage {
+  margin-left: auto;
+
+  color: #e22c43;
+
+  font-size: 11px;
+
+  white-space: nowrap;
+}
+
+.pkm-back-option {
+  grid-column: 1 / -1;
+
+  min-height: 42px !important;
+}
+
+
+/* ================================================================
+   PERSONAGENS
+   ================================================================ */
+
+.pkm-character-options
+button strong {
+  font-size: 18px;
+}
+
+.pkm-character-options
+button small {
+  margin-left: auto;
+
+  color: #667286;
+
+  font-size: 10px;
+}
+
+
+/* ================================================================
+   FINISHER
+   ================================================================ */
+
+.pkm-finisher-button {
+  color: #fff !important;
+
+  border-color:
+    #ff3048 !important;
+
+  background:
+    linear-gradient(
+      110deg,
+      #a2162b,
+      #430812
+    ) !important;
+}
+
+.pkm-character-options
+.pkm-finisher-button {
+  grid-column: 1 / -1;
+}
+
+
+/* ================================================================
+   ESPERA
+   ================================================================ */
+
+.pkm-wait-panel,
+.pkm-final-panel {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.pkm-wait-panel strong {
+  color: #111827;
+
+  font-size: 20px;
+}
+
+
+/* ================================================================
+   DANO
+   ================================================================ */
+
+.pkm-damage {
+  position: absolute;
+
+  z-index: 160;
+
+  color: #fff;
+
+  font-size:
+    clamp(
+      42px,
+      5vw,
+      82px
+    );
+
+  font-weight: 900;
+
+  text-shadow:
+    4px 4px 0 #000,
+    0 0 18px #ff3048;
+
+  animation:
+    pkmDamage
+    .85s ease
+    forwards;
+}
+
+.pkm-damage-boss {
+  top: 38%;
+  left: 50%;
+}
+
+.pkm-damage-player {
+  top: 28%;
+  left: 50%;
+}
+
+
+/* ================================================================
+   HABILIDADES
+   ================================================================ */
+
+/*
+ * Todas as habilidades usam a mesma animação
+ * estrutural. A ARTE é que muda para cada golpe.
+ */
+
+[class*="habilidade-murilo-"]
+.pkm-fighter-murilo {
+  animation:
+    pkmSkillMurilo
+    1.9s
+    cubic-bezier(.2, .8, .2, 1);
+}
+
+[class*="habilidade-vitor-"]
+.pkm-fighter-vitor {
+  animation:
+    pkmSkillVitor
+    1.9s
+    cubic-bezier(.2, .8, .2, 1);
+}
+
+[class*="habilidade-murilo-"]
+.pkm-boss-sprite,
+[class*="habilidade-vitor-"]
+.pkm-boss-sprite {
+  animation:
+    pkmSkillBossHit
+    .9s ease
+    .65s;
+}
+
+
+/* QUEBRA DE PADRÃO */
+
+.habilidade-murilo-quebra-de-padrao
+.pkm-technique-sprite {
+  filter:
+    drop-shadow(
+      0 22px 18px
+      rgba(0, 0, 0, .72)
+    )
+    drop-shadow(
+      0 0 28px
+      rgba(255, 25, 45, .42)
+    );
+}
+
+
+/* OLHO DO ANÃO */
+
+.habilidade-murilo-olho-do-anao
+.pkm-technique-sprite {
+  filter:
+    drop-shadow(
+      0 22px 18px
+      rgba(0, 0, 0, .72)
+    )
+    drop-shadow(
+      0 0 30px
+      rgba(255, 40, 40, .5)
+    );
+}
+
+
+/* CORRELAÇÃO */
+
+.habilidade-murilo-correlacao
+.pkm-technique-sprite {
+  filter:
+    drop-shadow(
+      0 22px 18px
+      rgba(0, 0, 0, .72)
+    )
+    drop-shadow(
+      0 0 27px
+      rgba(255, 110, 30, .45)
+    );
+}
+
+
+/* CAÇADOR DE IOC */
+
+.habilidade-murilo-cacador-de-ioc
+.pkm-technique-sprite {
+  filter:
+    drop-shadow(
+      0 22px 18px
+      rgba(0, 0, 0, .72)
+    )
+    drop-shadow(
+      0 0 31px
+      rgba(255, 35, 55, .48)
+    );
+}
+
+
+/* ================================================================
+   ATAQUE DO BOSS
+   ================================================================ */
+
+.boss-ataca-murilo
+.pkm-boss-sprite,
+.boss-ataca-vitor
+.pkm-boss-sprite {
+  animation:
+    pkmBossAttack
+    1s ease;
+}
+
+.boss-ataca-murilo
+.pkm-fighter-murilo {
+  animation:
+    pkmPlayerHit
+    .7s ease
+    .25s;
+}
+
+.boss-ataca-vitor
+.pkm-fighter-vitor {
+  animation:
+    pkmPlayerHit
+    .7s ease
+    .25s;
+}
+
+
+/* ================================================================
+   ESPECIAL
+   ================================================================ */
+
+.ataque-conjunto::after {
+  content: "";
+
+  position: absolute;
+
+  z-index: 35;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      110deg,
+      transparent 15%,
+      rgba(255, 38, 58, .25),
+      rgba(45, 226, 230, .25),
+      transparent 85%
+    );
+
+  animation:
+    pkmSpecialFlash
+    2s ease;
+}
+
+.ataque-conjunto
+.pkm-fighter-murilo {
+  animation:
+    pkmJointAttack
+    2.1s ease;
+}
+
+.ataque-conjunto
+.pkm-boss-sprite {
+  animation:
+    pkmJointBoss
+    1.5s ease
+    .55s;
+}
+
+
+/* ================================================================
+   RESULTADO
+   ================================================================ */
+
+.pkm-result-overlay {
+  position: absolute;
+
+  z-index: 400;
+
+  inset: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background:
+    rgba(3, 5, 10, .68);
+
+  backdrop-filter:
+    blur(4px);
+}
+
+.pkm-result-card {
+  width:
+    min(
+      650px,
+      88vw
+    );
+
+  box-sizing: border-box;
+
+  padding: 40px 45px;
+
+  text-align: center;
+
+  border: 5px solid #e8edf7;
+  outline: 5px solid #202b41;
+
+  border-radius: 5px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #111a2d,
+      #070b14
+    );
+
+  box-shadow:
+    10px 12px 0
+    rgba(0, 0, 0, .65);
+}
+
+.pkm-result-card > span {
+  color: #2de2e6;
+
+  font-size: 13px;
+  font-weight: 900;
+
+  letter-spacing: .2em;
+}
+
+.pkm-result-card h1 {
+  margin: 15px 0 4px;
+
+  font-size:
+    clamp(
+      30px,
+      3.4vw,
+      52px
+    );
+}
+
+.pkm-result-card h2 {
+  margin: 7px 0 18px;
+
+  color: #ff334d;
+
+  font-size:
+    clamp(
+      25px,
+      2.7vw,
+      40px
+    );
+}
+
+.pkm-result-card p {
+  color: #bdc6d7;
+
+  font-size: 17px;
+}
+
+.pkm-result-card button {
+  margin-top: 20px;
+
+  padding: 14px 24px;
+
+  border: 4px solid #fff;
+  outline: 3px solid #202b41;
+
+  background: #2de2e6;
+
+  color: #101722;
+
+  font: 900 15px "Courier New", monospace;
+
+  cursor: pointer;
+}
+
+
+/* ================================================================
+   ANIMAÇÕES
+   ================================================================ */
+
+@keyframes pkmArrow {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(6px);
+  }
+}
+
+@keyframes pkmDamage {
+  0% {
+    opacity: 0;
+
+    transform:
+      translate(-50%, 20px)
+      scale(.7);
+  }
+
+  25% {
+    opacity: 1;
+
+    transform:
+      translate(-50%, 0)
+      scale(1.25);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translate(-50%, -80px)
+      scale(1);
+  }
+}
+
+@keyframes pkmSkillMurilo {
+  0% {
+    opacity: 0;
+
+    transform:
+      translateX(-60px)
+      scale(.9);
+  }
+
+  18% {
+    opacity: 1;
+
+    transform:
+      translateX(0)
+      scale(1.06);
+  }
+
+  60% {
+    transform:
+      translateX(4vw)
+      scale(1.08);
+  }
+
+  100% {
+    opacity: 1;
+
+    transform:
+      translateX(0)
+      scale(1);
+  }
+}
+
+@keyframes pkmSkillVitor {
+  0% {
+    opacity: 0;
+
+    transform:
+      translateX(-50px)
+      scale(.9);
+  }
+
+  20% {
+    opacity: 1;
+
+    transform:
+      translateX(0)
+      scale(1.05);
+  }
+
+  60% {
+    transform:
+      translateX(3vw)
+      scale(1.08);
+  }
+
+  100% {
+    transform:
+      translateX(0)
+      scale(1);
+  }
+}
+
+@keyframes pkmSkillBossHit {
+  0%,
+  100% {
+    transform: translateX(0);
+
+    filter: brightness(1);
+  }
+
+  18% {
+    transform: translateX(-18px);
+
+    filter: brightness(3);
+  }
+
+  36% {
+    transform: translateX(16px);
+
+    filter: brightness(.6);
+  }
+
+  55% {
+    transform: translateX(-12px);
+
+    filter: brightness(2.3);
+  }
+
+  75% {
+    transform: translateX(8px);
+  }
+}
+
+@keyframes pkmBossAttack {
+  0%,
+  100% {
+    transform: translate(0);
+  }
+
+  50% {
+    transform:
+      translate(-8vw, 4vh)
+      scale(1.06);
+  }
+}
+
+@keyframes pkmPlayerHit {
+  0%,
+  100% {
+    transform: translateX(0);
+
+    filter: brightness(1);
+  }
+
+  25% {
+    transform: translateX(-17px);
+
+    filter: brightness(2.5);
+  }
+
+  50% {
+    transform: translateX(14px);
+  }
+
+  75% {
+    transform: translateX(-8px);
+  }
+}
+
+@keyframes pkmJointAttack {
+  0% {
+    transform:
+      translateX(-50px)
+      scale(.92);
+
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 1;
+
+    transform:
+      translateX(0)
+      scale(1.08);
+  }
+
+  65% {
+    transform:
+      translateX(10vw)
+      scale(1.12);
+  }
+
+  100% {
+    transform:
+      translateX(0)
+      scale(1);
+  }
+}
+
+@keyframes pkmJointBoss {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+
+  30% {
+    filter:
+      brightness(4)
+      drop-shadow(
+        0 0 35px #ff334d
+      );
+  }
+
+  60% {
+    transform: scale(.95);
+
+    filter:
+      brightness(5)
+      drop-shadow(
+        0 0 50px #2de2e6
+      );
+  }
+}
+
+@keyframes pkmSpecialFlash {
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  35%,
+  65% {
+    opacity: 1;
+  }
+}
+
+
+/* ================================================================
+   NOTEBOOK
+   ================================================================ */
+
+@media (max-width: 1200px) {
+  .pkm-boss-hud {
+    width: 41vw;
+  }
+
+  .pkm-boss-stage {
+    right: 0;
+
+    width: 60vw;
+  }
+
+  .pkm-boss-sprite {
+    height: 61vh;
+  }
+
+  .pkm-fighter-sprite {
+    height: 61vh;
+  }
+
+  .pkm-technique-sprite {
+    height: 69vh;
+  }
+
+  .pkm-party-hud {
+    width: 35vw;
+  }
+}
+
+
+/* ================================================================
+   TABLET
+   ================================================================ */
+
+@media (max-width: 850px) {
+  .pkm-boss-hud {
+    left: 3vw;
+
+    width: 48vw;
+  }
+
+  .pkm-boss-stage {
+    right: -5vw;
+
+    width: 66vw;
+    height: 55vh;
+  }
+
+  .pkm-boss-sprite {
+    height: 52vh;
+  }
+
+  .pkm-party-stage {
+    bottom: 26vh;
+
+    width: 72vw;
+    height: 46vh;
+  }
+
+  .pkm-fighter {
+    bottom: -12vh;
+  }
+
+  .pkm-fighter-sprite {
+    height: 51vh;
+  }
+
+  .pkm-technique-sprite {
+    height: 58vh;
+  }
+
+  .pkm-party-hud {
+    right: 2vw;
+    bottom: 28vh;
+
+    width: 42vw;
+  }
+
+  .pkm-command-panel {
+    height: 25vh;
+
+    grid-template-columns:
+      1.25fr 1fr;
+  }
+}
+
+
+/* ================================================================
+   MOBILE
+   ================================================================ */
+
+@media (max-width: 620px) {
+  .pkm-boss-hud {
+    top: 8vh;
+    left: 3vw;
+
+    width: 61vw;
+  }
+
+  .pkm-boss-stage {
+    top: 12vh;
+    right: -8vw;
+
+    width: 73vw;
+    height: 42vh;
+  }
+
+  .pkm-boss-sprite {
+    height: 41vh;
+  }
+
+  .pkm-party-stage {
+    left: -5vw;
+    bottom: 37vh;
+
+    width: 85vw;
+    height: 36vh;
+  }
+
+  .pkm-fighter {
+    bottom: -9vh;
+  }
+
+  .pkm-fighter-murilo {
+    left: -8vw;
+  }
+
+  .pkm-fighter-vitor {
+    left: 33vw;
+  }
+
+  .pkm-fighter-sprite {
+    height: 39vh;
+  }
+
+  .pkm-technique-sprite {
+    height: 44vh;
+  }
+
+  .pkm-party-hud {
+    right: 2vw;
+    bottom: 38vh;
+
+    width: 48vw;
+
+    gap: 6px;
+  }
+
+  .pkm-command-panel {
+    left: 2vw;
+    right: 2vw;
+
+    height: 35vh;
+
+    min-height: 0;
+
+    grid-template-columns: 1fr;
+    grid-template-rows:
+      .8fr 1.2fr;
+  }
+
+  .pkm-dialogue-box {
+    padding: 11px 14px;
+  }
+
+  .pkm-dialogue-box h2 {
+    font-size: 12px;
+  }
+
+  .pkm-dialogue-box p {
+    font-size: 9px;
+  }
+
+  .pkm-options {
+    gap: 4px;
+
+    padding: 5px;
+
+    border-width: 3px;
+  }
+
+  .pkm-options button {
+    min-height: 42px;
+
+    padding: 5px 7px;
+
+    border-width: 2px;
+
+    font-size: 10px;
+  }
+}

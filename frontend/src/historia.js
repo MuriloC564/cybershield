@@ -1,29 +1,58 @@
 export const PERSONAGENS = {
-  murilo: { nome: 'Murilo', cor: '#ff4757', espelhar: false },
-  vitor: { nome: 'Vitor', cor: '#f5f5f5', espelhar: false },
+  murilo: {
+    nome: 'Murilo',
+    cor: '#ff4757',
+    espelhar: false,
+  },
 
-  clara: { nome: 'Clara', cor: '#2de2e6' },
+  vitor: {
+    nome: 'Vitor',
+    cor: '#f5f5f5',
+    espelhar: false,
+  },
+
+  clara: {
+    nome: 'Clara',
+    cor: '#2de2e6',
+  },
 
   cleiton: {
     nome: 'Prof. Cleiton',
     cor: '#3d7eff',
+    espelhar: false,
   },
 
   fabio: {
     nome: 'Prof. Fábio',
     cor: '#bd5cff',
+    espelhar: false,
   },
 
-  // Mantido por compatibilidade com cenas antigas.
   bruxo: {
     nome: 'Prof. Fábio',
     cor: '#bd5cff',
+    espelhar: false,
   },
 
-  lincoln: { nome: 'Lincoln', cor: '#2ed573' },
-  enzo: { nome: 'Enzo', cor: '#ff8a3d' },
-  beoni: { nome: 'Beoni', cor: '#7c8ba8' },
-  rafaela: { nome: 'Rafaela', cor: '#ff7ac8' },
+  lincoln: {
+    nome: 'Lincoln',
+    cor: '#2ed573',
+  },
+
+  enzo: {
+    nome: 'Enzo',
+    cor: '#ff8a3d',
+  },
+
+  beoni: {
+    nome: 'Beoni',
+    cor: '#7c8ba8',
+  },
+
+  rafaela: {
+    nome: 'Rafaela',
+    cor: '#ff7ac8',
+  },
 
   narrador: {
     nome: '',
@@ -32,7 +61,7 @@ export const PERSONAGENS = {
 }
 
 
-const DUPLA = [
+const DUPLA_ALUNOS = [
   {
     id: 'murilo',
     lado: 'esq',
@@ -45,15 +74,30 @@ const DUPLA = [
 ]
 
 
+const DUPLA_PROFESSORES = [
+  {
+    id: 'cleiton',
+    lado: 'esq',
+  },
+
+  {
+    id: 'fabio',
+    lado: 'dir',
+  },
+]
+
+
 export const FASES = [
   {
     id: 'fase-1',
 
     titulo: 'Sinais em Paraíso',
 
-    modulo: 'Phishing & Engenharia Social',
+    modulo:
+      'Phishing & Engenharia Social',
 
-    categoria_slug: 'phishing',
+    categoria_slug:
+      'phishing',
 
     icone: '🎣',
 
@@ -77,7 +121,8 @@ export const FASES = [
         fundo:
           '/historia/fase1/fundo-metro.png',
 
-        elenco: DUPLA,
+        elenco:
+          DUPLA_ALUNOS,
 
         falas: [
           {
@@ -111,7 +156,8 @@ export const FASES = [
           {
             quem: 'vitor',
             pose: 'pergunta',
-            texto: 'Qual?',
+            texto:
+              'Qual?',
           },
 
           {
@@ -187,7 +233,7 @@ export const FASES = [
 
 
       // ==========================================================
-      // 02 — CHEGADA EM PARAÍSO
+      // 02 — PARAÍSO
       // ==========================================================
 
       {
@@ -196,7 +242,8 @@ export const FASES = [
         fundo:
           '/historia/fase1/fundo-estacao.png',
 
-        elenco: DUPLA,
+        elenco:
+          DUPLA_ALUNOS,
 
         falas: [
           {
@@ -230,7 +277,8 @@ export const FASES = [
         escolha: {
           quem: 'murilo',
 
-          resposta_quem: 'vitor',
+          resposta_quem:
+            'vitor',
 
           pergunta:
             'Uma mensagem SMS usa urgência e um link falso para tentar roubar dados. Que tipo de ataque é esse?',
@@ -257,25 +305,11 @@ export const FASES = [
       {
         id: 'andando-paraiso',
 
-        cinematica: {
-          imagem:
-            '/historia/fase1/02-andando-paraiso.png',
-
-          duracao: 5200,
-
-          efeito: 'caminhada',
-
-          titulo:
-            'ESTAÇÃO PARAÍSO',
-
-          subtitulo:
-            'Investigação em andamento',
-        },
-
         fundo:
           '/historia/fase1/fundo-estacao.png',
 
-        elenco: DUPLA,
+        elenco:
+          DUPLA_ALUNOS,
 
         falas: [
           {
@@ -322,19 +356,11 @@ export const FASES = [
       {
         id: 'celular-no-banco',
 
-        cinematica: {
-          imagem:
-            '/historia/fase1/03-celular-banco.png',
-
-          duracao: 5000,
-
-          efeito: 'celular',
-        },
-
         fundo:
           '/historia/fase1/fundo-estacao.png',
 
-        elenco: DUPLA,
+        elenco:
+          DUPLA_ALUNOS,
 
         falas: [
           {
@@ -353,7 +379,8 @@ export const FASES = [
           {
             quem: 'murilo',
             pose: 'fala',
-            texto: 'Não.',
+            texto:
+              'Não.',
           },
 
           {
@@ -383,10 +410,12 @@ export const FASES = [
         fundo:
           '/historia/fase1/fundo-estacao.png',
 
-        elenco: DUPLA,
+        elenco:
+          DUPLA_ALUNOS,
 
         celular: {
-          de: 'Campanha ativa',
+          de:
+            'Campanha ativa',
 
           texto:
             'Seu pacote está retido. Regularize agora para evitar a devolução.',
@@ -418,7 +447,8 @@ export const FASES = [
         escolha: {
           quem: 'murilo',
 
-          resposta_quem: 'vitor',
+          resposta_quem:
+            'vitor',
 
           pergunta:
             'Qual destes sinais é mais forte para identificar que a página pode ser falsa?',
@@ -448,10 +478,12 @@ export const FASES = [
         fundo:
           '/historia/fase1/fundo-estacao.png',
 
-        elenco: DUPLA,
+        elenco:
+          DUPLA_ALUNOS,
 
         celular: {
-          de: 'DESCONHECIDO',
+          de:
+            'DESCONHECIDO',
 
           texto:
             'VOCÊS DEVERIAM TER DEIXADO O CELULAR ONDE ESTAVA.',
@@ -488,7 +520,8 @@ export const FASES = [
           {
             quem: 'murilo',
             pose: 'fala',
-            texto: 'Chegou.',
+            texto:
+              'Chegou.',
           },
         ],
       },
@@ -501,21 +534,11 @@ export const FASES = [
       {
         id: 'vulto-e-revelacao',
 
-        cinematica: {
-          imagem:
-            '/historia/fase1/04-vulto.png',
-
-          duracao: 5200,
-
-          efeito: 'monstro',
-
-          semHud: true,
-        },
-
         fundo:
           '/historia/fase1/fundo-estacao.png',
 
-        elenco: DUPLA,
+        elenco:
+          DUPLA_ALUNOS,
 
         falas: [
           {
@@ -534,7 +557,8 @@ export const FASES = [
           {
             quem: 'murilo',
             pose: 'fala',
-            texto: 'Vi.',
+            texto:
+              'Vi.',
           },
 
           {
@@ -547,7 +571,8 @@ export const FASES = [
           {
             quem: 'murilo',
             pose: 'fala',
-            texto: 'Não.',
+            texto:
+              'Não.',
           },
 
           {
@@ -560,36 +585,17 @@ export const FASES = [
 
 
       // ==========================================================
-      // 08 — PHISHING MONSTER
+      // 08 — CONFRONTO
       // ==========================================================
 
       {
         id: 'phishing-monster',
 
-        cinematica: {
-          video:
-            '/historia/fase1/phishing-monster-final.mp4',
-
-          imagemFallback:
-            '/historia/fase1/phishing-monster-final.png',
-
-          duracao: 6500,
-
-          efeito: 'monstro',
-
-          titulo:
-            'AMEAÇA IDENTIFICADA',
-
-          subtitulo:
-            'PHISHING MONSTER',
-
-          semHud: true,
-        },
-
         fundo:
           '/historia/fase1/fundo-estacao.png',
 
-        elenco: DUPLA,
+        elenco:
+          DUPLA_ALUNOS,
 
         falas: [
           {
@@ -609,175 +615,109 @@ export const FASES = [
           {
             quem: 'narrador',
             texto:
-              'O monstro alterna iscas, mensagens e falsos sinais de confiança enquanto avança sobre os dois.',
+              'A criatura alterna iscas, mensagens e falsos sinais de confiança enquanto avança sobre os dois.',
           },
         ],
 
         escolha: {
           quem: 'murilo',
 
-          resposta_quem: 'vitor',
+          resposta_quem:
+            'vitor',
 
           pergunta:
-            'O monstro exibe uma página convincente, com HTTPS e identidade visual correta, mas o domínio é diferente do oficial. Em que você deve confiar para validar a origem?',
+            'Uma página parece legítima e usa HTTPS, mas o domínio é diferente do oficial. O que deve ser validado?',
 
           alternativas: [
-            'No cadeado HTTPS',
-            'No domínio e na origem oficial verificada',
-            'No logotipo da página',
-            'Na urgência da mensagem',
+            'O cadeado HTTPS',
+            'O domínio e a origem oficial verificada',
+            'O logotipo da página',
+            'A urgência da mensagem',
           ],
 
           correta: 1,
 
           explicacao:
-            'A aparência e o HTTPS podem existir em páginas fraudulentas. A validação precisa considerar domínio, origem e canais oficiais.',
+            'A aparência e o HTTPS também podem existir em páginas fraudulentas. A validação precisa considerar o domínio, a origem e os canais oficiais.',
         },
       },
 
 
       // ==========================================================
-      // 09 — PAUSA DA LUTA
+      // 09 — BOSS
       // ==========================================================
 
       {
-        id: 'pausa-da-luta',
+        id:
+          'batalha-phishing-monster',
 
-        cinematica: {
-          imagem:
-            '/historia/fase1/05-pausa-luta.png',
+        tipo: 'boss',
 
-          duracao: 5600,
+        fundo:
+          '/historia/fase1/fundo-estacao.png',
+      },
 
-          efeito: 'batalha',
 
-          semHud: true,
-        },
+      // ==========================================================
+      // 10 — PÓS-BATALHA
+      // ==========================================================
+
+      {
+        id: 'pos-batalha',
 
         fundo:
           '/historia/fase1/fundo-estacao.png',
 
-        elenco: DUPLA,
+        elenco:
+          DUPLA_ALUNOS,
 
         falas: [
           {
             quem: 'narrador',
             texto:
-              'Depois de uma sequência de ataques, os dois conseguem alguns segundos de distância. Estão cansados e machucados.',
+              'O último impacto atravessa a estrutura do Phishing Monster. Os fragmentos vermelhos começam a desaparecer.',
           },
 
           {
             quem: 'vitor',
             pose: 'fala',
             texto:
-              'Isso não é um Low Sec comum.',
+              'Isso definitivamente não era um golpe normal.',
           },
 
           {
             quem: 'murilo',
             pose: 'fala',
             texto:
-              'Não. Ele está mudando a isca toda vez que a gente entende o padrão.',
-          },
-
-          {
-            quem: 'vitor',
-            pose: 'fala',
-            texto:
-              'E quando eu quebro o pretexto, ele troca a forma de manipulação.',
-          },
-
-          {
-            quem: 'murilo',
-            pose: 'fala',
-            texto:
-              'Separados, a gente só está fazendo ele se adaptar.',
+              'Ele estava aprendendo.',
           },
 
           {
             quem: 'vitor',
             pose: 'pergunta',
-            texto: 'Então?',
+            texto:
+              'Aprendendo com a gente?',
           },
 
           {
             quem: 'murilo',
             pose: 'fala',
             texto:
-              'Eu encontro a estrutura. Você encontra o motivo que faz a vítima acreditar nela.',
+              'Toda vez que a gente entendia uma técnica, ele mudava.',
           },
 
           {
             quem: 'vitor',
             pose: 'fala',
             texto:
-              'Correlação e Leitura de Pretexto ao mesmo tempo.',
+              'Até a gente combinar as duas análises.',
           },
 
           {
             quem: 'murilo',
             pose: 'fala',
             texto:
-              'Uma chance. É tudo que a gente precisa.',
-          },
-        ],
-      },
-
-
-      // ==========================================================
-      // 10 — GOLPE FINAL
-      // ==========================================================
-
-      {
-        id: 'golpe-final',
-
-        cinematica: {
-          imagem:
-            '/historia/fase1/06-golpe-final.png',
-
-          duracao: 7200,
-
-          efeito: 'golpe-final',
-
-          titulo:
-            'CORRELAÇÃO × LEITURA DE PRETEXTO',
-
-          subtitulo:
-            'Vulnerabilidade encontrada',
-
-          semHud: true,
-        },
-
-        fundo:
-          '/historia/fase1/fundo-estacao.png',
-
-        elenco: DUPLA,
-
-        falas: [
-          {
-            quem: 'narrador',
-            texto:
-              'O Olho do Anão encontra as conexões escondidas entre os ataques. Ao mesmo tempo, Vitor desmonta medo, urgência, autoridade e confiança usados como pretexto.',
-          },
-
-          {
-            quem: 'murilo',
-            pose: 'fala',
-            texto:
-              'Achei o padrão.',
-          },
-
-          {
-            quem: 'vitor',
-            pose: 'fala',
-            texto:
-              'E eu achei a mentira que mantém ele de pé.',
-          },
-
-          {
-            quem: 'narrador',
-            texto:
-              'As duas técnicas convergem. A estrutura e a manipulação deixam de ser duas partes separadas. Pela primeira vez, o Phishing Monster fica exposto.',
+              'Correlação e Leitura de Pretexto.',
           },
         ],
       },
@@ -790,27 +730,17 @@ export const FASES = [
       {
         id: 'observador',
 
-        cinematica: {
-          imagem:
-            '/historia/fase1/07-observador.png',
-
-          duracao: 6000,
-
-          efeito: 'suspense',
-
-          semHud: true,
-        },
-
         fundo:
           '/historia/fase1/fundo-estacao.png',
 
-        elenco: DUPLA,
+        elenco:
+          DUPLA_ALUNOS,
 
         falas: [
           {
             quem: 'narrador',
             texto:
-              'Os últimos fragmentos vermelhos desaparecem. No extremo da plataforma, uma figura observa os dois em silêncio.',
+              'No extremo da plataforma, uma figura humana observa os dois em silêncio.',
           },
 
           {
@@ -864,31 +794,17 @@ export const FASES = [
 
 
       // ==========================================================
-      // 12 — MANHÃ SEGUINTE
+      // 12 — FACULDADE
       // ==========================================================
 
       {
         id: 'manha-seguinte',
 
-        cinematica: {
-          imagem:
-            '/historia/fase1/08-chegada-sala.png',
-
-          duracao: 6000,
-
-          efeito: 'manha',
-
-          titulo:
-            'MANHÃ SEGUINTE',
-
-          subtitulo:
-            'Faculdade de Tecnologia — São Paulo',
-        },
-
         fundo:
-          '/historia/fase1/08-chegada-sala.png',
+          '/historia/fase1/fundo-sala.png',
 
-        elenco: DUPLA,
+        elenco:
+          DUPLA_ALUNOS,
 
         falas: [
           {
@@ -928,27 +844,33 @@ export const FASES = [
           {
             quem: 'narrador',
             texto:
-              'Cleiton já está sentado na frente da sala. O jeito como olha para os dois elimina a necessidade da primeira explicação.',
+              'Cleiton já está na sala. O jeito como olha para os dois elimina a necessidade da primeira explicação.',
           },
         ],
       },
 
 
       // ==========================================================
-      // 13 — CLEITON
+      // 13 — PROFESSORES
       // ==========================================================
 
       {
-        id: 'cleiton-ja-sabia',
+        id:
+          'cleiton-ja-sabia',
 
         fundo:
-          '/historia/fase1/08-chegada-sala.png',
+          '/historia/fase1/fundo-sala.png',
 
-        elenco: DUPLA,
+        elenco:
+          DUPLA_PROFESSORES,
+
+        elencoDinamico:
+          true,
 
         falas: [
           {
             quem: 'cleiton',
+            pose: 'fala',
             texto:
               'Sentem. Nós vamos conversar sobre Paraíso.',
           },
@@ -969,6 +891,7 @@ export const FASES = [
 
           {
             quem: 'cleiton',
+            pose: 'fala',
             texto:
               'Eu sabia que havia atividade anormal. Não sabia que vocês encontrariam algo daquele nível.',
           },
@@ -976,7 +899,49 @@ export const FASES = [
           {
             quem: 'narrador',
             texto:
-              'A porta da frente se abre. Fábio entra com um notebook e conecta o equipamento ao projetor.',
+              'A porta se abre. Fábio entra e caminha até a frente da sala.',
+          },
+
+          {
+            quem: 'fabio',
+            pose: 'fala',
+            texto:
+              'Pelo jeito vocês já começaram sem mim.',
+          },
+
+          {
+            quem: 'vitor',
+            pose: 'fala',
+            texto:
+              'Se vocês dois já sabiam que tinha alguma coisa em Paraíso, podiam ter avisado.',
+          },
+
+          {
+            quem: 'cleiton',
+            pose: 'fala',
+            texto:
+              'Sabíamos que havia atividade anormal. Isso é diferente de saber exatamente o que estava lá.',
+          },
+
+          {
+            quem: 'murilo',
+            pose: 'pergunta',
+            texto:
+              'Então aquilo já apareceu antes?',
+          },
+
+          {
+            quem: 'fabio',
+            pose: 'fala',
+            texto:
+              'Aquilo especificamente? Não.',
+          },
+
+          {
+            quem: 'fabio',
+            pose: 'fala',
+            texto:
+              'Mas fenômenos parecidos... sim.',
           },
         ],
       },
@@ -989,81 +954,208 @@ export const FASES = [
       {
         id: 'zero-trust',
 
-        cinematica: {
-          imagem:
-            '/historia/fase1/09-zero-trust.png',
-
-          duracao: 7000,
-
-          efeito: 'revelacao',
-
-          titulo:
-            'ZERO TRUST',
-
-          subtitulo:
-            'Confiar nunca. Sempre verificar.',
-
-          semHud: true,
-        },
-
         fundo:
-          '/historia/fase1/09-zero-trust.png',
+          '/historia/fase1/fundo-sala.png',
 
-        elenco: [],
+        elenco:
+          DUPLA_PROFESSORES,
+
+        elencoDinamico:
+          true,
 
         falas: [
           {
             quem: 'cleiton',
+            pose: 'fala',
             texto:
               'O que vocês enfrentaram em Paraíso tem um nome no nosso arquivo: Phishing Monster.',
           },
 
           {
-            quem: 'fabio',
+            quem: 'vitor',
+            pose: 'pergunta',
             texto:
-              'E antes que alguém pergunte: não, ele não foi o primeiro.',
+              'Vocês deram nome praquilo?',
+          },
+
+          {
+            quem: 'fabio',
+            pose: 'fala',
+            texto:
+              'Não fomos nós.',
+          },
+
+          {
+            quem: 'murilo',
+            pose: 'pergunta',
+            texto:
+              'Então quem foi?',
+          },
+
+          {
+            quem: 'fabio',
+            pose: 'fala',
+            texto:
+              'Essa é uma das perguntas que ainda estamos tentando responder.',
+          },
+
+          {
+            quem: 'cleiton',
+            pose: 'fala',
+            texto:
+              'E antes que vocês perguntem: não, ele não foi o primeiro caso.',
+          },
+
+          {
+            quem: 'vitor',
+            pose: 'pergunta',
+            texto:
+              'Tem mais daquelas coisas?',
+          },
+
+          {
+            quem: 'fabio',
+            pose: 'fala',
+            texto:
+              'Existem outros registros. Com comportamentos diferentes, técnicas diferentes e padrões diferentes.',
+          },
+
+          {
+            quem: 'murilo',
+            pose: 'fala',
+            texto:
+              'A criatura de Paraíso estava se adaptando.',
+          },
+
+          {
+            quem: 'cleiton',
+            pose: 'fala',
+            texto:
+              'Exatamente.',
+          },
+
+          {
+            quem: 'murilo',
+            pose: 'fala',
+            texto:
+              'Toda vez que a gente entendia uma técnica, ela mudava.',
+          },
+
+          {
+            quem: 'fabio',
+            pose: 'fala',
+            texto:
+              'Porque vocês estavam olhando para cada ataque isoladamente.',
+          },
+
+          {
+            quem: 'vitor',
+            pose: 'fala',
+            texto:
+              'Até a gente juntar a correlação dele com a minha leitura de pretexto.',
+          },
+
+          {
+            quem: 'cleiton',
+            pose: 'fala',
+            texto:
+              'E foi exatamente isso que tornou o padrão visível.',
           },
 
           {
             quem: 'narrador',
             texto:
-              'No telão aparecem registros de outros incidentes, padrões de ameaça e arquivos classificados.',
+              'Cleiton troca um olhar rápido com Fábio antes de continuar.',
+          },
+
+          {
+            quem: 'cleiton',
+            pose: 'fala',
+            texto:
+              'Existe uma regra que vocês vão precisar aprender se pretendem continuar investigando esses casos.',
           },
 
           {
             quem: 'vitor',
+            pose: 'pergunta',
             texto:
-              'Vocês têm um arquivo disso tudo?',
-          },
-
-          {
-            quem: 'fabio',
-            texto:
-              'Temos mais do que um arquivo.',
+              'Que regra?',
           },
 
           {
             quem: 'cleiton',
+            pose: 'fala',
             texto:
-              'Zero Trust não é só o nome desta operação. É a regra que mantém vocês vivos a partir de agora: não confiem na aparência, na origem presumida ou no primeiro padrão que encontrarem.',
+              'Nunca confiem apenas na aparência.',
+          },
+
+          {
+            quem: 'fabio',
+            pose: 'fala',
+            texto:
+              'Não confiem na origem presumida. Não confiem no primeiro padrão que encontrarem.',
           },
 
           {
             quem: 'murilo',
+            pose: 'pergunta',
             texto:
-              'A criatura estava se adaptando.',
-          },
-
-          {
-            quem: 'fabio',
-            texto:
-              'E alguém estava observando a adaptação.',
+              'Zero Trust.',
           },
 
           {
             quem: 'cleiton',
+            pose: 'fala',
             texto:
-              'Paraíso não foi o começo. Foi apenas o momento em que vocês entraram no caso.',
+              'Exatamente.',
+          },
+
+          {
+            quem: 'vitor',
+            pose: 'fala',
+            texto:
+              'E aquele cara na estação?',
+          },
+
+          {
+            quem: 'fabio',
+            pose: 'fala',
+            texto:
+              'Se ele estava observando a luta, precisamos descobrir por quê.',
+          },
+
+          {
+            quem: 'murilo',
+            pose: 'fala',
+            texto:
+              'Ele queria que a gente percebesse que estava lá.',
+          },
+
+          {
+            quem: 'cleiton',
+            pose: 'fala',
+            texto:
+              'Então não deem a ele aquilo que ele espera.',
+          },
+
+          {
+            quem: 'vitor',
+            pose: 'pergunta',
+            texto:
+              'Que seria?',
+          },
+
+          {
+            quem: 'cleiton',
+            pose: 'fala',
+            texto:
+              'Confiança.',
+          },
+
+          {
+            quem: 'narrador',
+            texto:
+              'A sala fica em silêncio por alguns segundos. Paraíso havia terminado, mas a investigação estava apenas começando.',
           },
         ],
 
@@ -1076,38 +1168,8 @@ export const FASES = [
 
           subtitulo:
             'O incidente foi contido. A investigação Zero Trust está apenas começando.',
-
-          imagem:
-            '/historia/fase1/09-zero-trust.png',
         },
       },
     ],
-  },
-
-
-  // ==============================================================
-  // FASE 2
-  // ==============================================================
-
-  {
-    id: 'fase-2',
-
-    titulo:
-      'Em desenvolvimento',
-
-    modulo:
-      'Continuação',
-
-    categoria_slug:
-      'phishing',
-
-    icone: '🔒',
-
-    disponivel: false,
-
-    resumo:
-      'A investigação Zero Trust continua em breve.',
-
-    cenas: [],
   },
 ]
