@@ -1,10 +1,11 @@
 import os
+import jwt 
 
 from datetime import datetime, timedelta
 
 from dotenv import load_dotenv
 
-from jose import JWTError, jwt
+from jwt import PyJWTError   
 
 from passlib.context import CryptContext
 
@@ -114,7 +115,7 @@ def verificar_token(token: str):
             algorithms=[ALGORITHM]
         )
 
-    except JWTError:
+    except PyJWTError:
 
         return None
 
