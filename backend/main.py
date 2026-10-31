@@ -14,9 +14,15 @@ from database import SessionLocal, engine, Base
 from models import Usuario, Categoria, Pontuacao, SkinComprada, SkinEquipada
 from schemas import UsuarioCadastro, UsuarioLogin, RespostaQuiz, RecuperarSenha, RedefinirSenha, CompraSkin, EquiparSkin
 from auth import hash_senha, verificar_senha, criar_token, usuario_atual
+from contextlib import asynccontextmanager
 
+@asynccontextmanager
+async def lifespan(_app):
+    startup()
+    yield
+    
 load_dotenv()
-app = FastAPI(title="CyberShield API")
+app = FastAPI(title="CyberShield API", lifespan=lifespan)
 
 ORIGENS_PERMITIDAS = [
     "http://localhost:5173",
@@ -243,7 +249,7 @@ def garantir_categorias(db: Session):
     criar_categoria_se_nao_existir(db, "Curiosidades", "curiosidades", cyber.id, 0)
     criar_categoria_se_nao_existir(db, "RH Básico", "rh-basico", rh.id, 0)
 
-@app.on_event("startup")
+
 def startup():
     db = SessionLocal()
     try: garantir_categorias(db)
