@@ -12,9 +12,9 @@ jobs:
   # ---------------------------------------------------------------- 1
   secrets-scan:
     name: 1 - Secrets (Gitleaks)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
       - name: Instalar Gitleaks (versão fixa)
@@ -22,7 +22,7 @@ jobs:
           curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_linux_x64.tar.gz | tar xz gitleaks
       - name: Gitleaks (histórico completo)
         run: ./gitleaks detect --source . --redact --exit-code 1 --report-format json --report-path gitleaks.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: relatorio-01-gitleaks
@@ -33,11 +33,11 @@ jobs:
   sast:
     name: 2 - SAST (Semgrep)
     needs: secrets-scan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     container:
       image: semgrep/semgrep:1.75.0
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Semgrep
         run: |
           semgrep scan \
@@ -45,7 +45,7 @@ jobs:
             --config p/python --config p/javascript \
             --exclude node_modules --exclude frontend/public \
             --json --output semgrep.json --error
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: relatorio-02-semgrep
@@ -56,12 +56,12 @@ jobs:
   build:
     name: 3 - Build, dependências e artefato
     needs: sast
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       # Frontend (Node)
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
       - name: Frontend - instalar e buildar
@@ -76,7 +76,7 @@ jobs:
           npm audit --json > ../npm-audit.json || true
 
       # Backend (Python)
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.12'
       - name: Backend - instalar, checar sintaxe e auditar
@@ -94,7 +94,7 @@ jobs:
       - name: Empacotar artefato (SHA do commit)
         run: tar czf app-${{ github.sha }}.tar.gz frontend/dist backend
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: relatorio-03-build
@@ -105,7 +105,7 @@ jobs:
             pip-audit.json
             testes.txt
           if-no-files-found: warn
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: artefato-aplicacao
           path: app-${{ github.sha }}.tar.gz
@@ -114,11 +114,11 @@ jobs:
   sca:
     name: 4 - SCA (Trivy fs)
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Trivy fs - relatório completo (tabela)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           scan-type: fs
           scan-ref: .
@@ -128,7 +128,7 @@ jobs:
           output: trivy-fs.txt
           exit-code: '0'
       - name: Trivy fs - HIGH/CRITICAL (bloqueia)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           scan-type: fs
           scan-ref: .
@@ -138,7 +138,7 @@ jobs:
           format: json
           output: trivy-fs.json
           exit-code: '1'
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: relatorio-04-trivy-sca
@@ -151,7 +151,7 @@ jobs:
   docker-build:
     name: 5 - Docker build + GHCR
     needs: sca
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: write
@@ -159,19 +159,19 @@ jobs:
       image: ${{ steps.nome.outputs.image }}
       digest: ${{ steps.push.outputs.digest }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Nome da imagem (minúsculas)
         id: nome
         run: echo "image=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build e push
         id: push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           context: .
           push: true
@@ -185,7 +185,7 @@ jobs:
             echo "- Digest: ${{ steps.push.outputs.digest }}"
             echo "- Commit: ${{ github.sha }}"
           } > docker-build.md
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: relatorio-05-docker-build
@@ -195,7 +195,7 @@ jobs:
   image-scan:
     name: 6 - Scan da imagem (Trivy)
     needs: docker-build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: read
@@ -204,14 +204,14 @@ jobs:
       TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Trivy image - relatório completo (tabela)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ${{ needs.docker-build.outputs.image }}:${{ github.sha }}
           format: table
           output: trivy-image.txt
           exit-code: '0'
       - name: Trivy image - HIGH/CRITICAL com correção (bloqueia)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ${{ needs.docker-build.outputs.image }}:${{ github.sha }}
           severity: HIGH,CRITICAL
@@ -219,7 +219,7 @@ jobs:
           format: json
           output: trivy-image.json
           exit-code: '1'
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: relatorio-06-trivy-image
@@ -232,7 +232,7 @@ jobs:
   dast-staging:
     name: 7 - Homologação + ZAP
     needs: [docker-build, image-scan]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: homologacao
     permissions:
       contents: read
@@ -252,7 +252,7 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     steps:
-      - uses: docker/login-action@v3
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -274,13 +274,13 @@ jobs:
       - name: Permissão de escrita para o ZAP
         run: chmod -R a+w "$GITHUB_WORKSPACE"
       - name: ZAP Baseline
-        uses: zaproxy/action-baseline@v0.12.0
+        uses: zaproxy/action-baseline@66042c8e7e24680119199a017e5b0e8603bf4dae # v0.12.0
         with:
           target: http://localhost:8080
           fail_action: false
           allow_issue_writing: false
           artifact_name: zap-bruto
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: relatorio-07-homologacao-zap
@@ -295,7 +295,7 @@ jobs:
     name: 8 - Aprovação + Produção
     needs: [docker-build, dast-staging]
     if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: producao        # Required reviewers pausam aqui
     steps:
       - name: "Deploy (exemplo - Render com imagem do GHCR, pelo SHA)"
@@ -318,7 +318,7 @@ jobs:
             echo "- Data (UTC): $(date -u +%Y-%m-%dT%H:%M:%SZ)"
             echo "- Execução: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           } > deploy-producao.md
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: relatorio-08-producao
@@ -329,9 +329,9 @@ jobs:
     name: ★ Resumo da Esteira
     if: always()
     needs: [secrets-scan, sast, build, sca, docker-build, image-scan, dast-staging, deploy-prod]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         continue-on-error: true
         with:
           pattern: relatorio-*
@@ -361,7 +361,7 @@ jobs:
             echo "| 8 | Aprovação + Produção | ${{ needs.deploy-prod.result }} | - |"
           } > resumo-esteira.md
           cat resumo-esteira.md >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: resumo-da-esteira
           path: resumo-esteira.md

@@ -126,6 +126,7 @@ function gerarDica(pergunta) {
   const correta = pergunta.alternativas?.[pergunta.resposta_correta]
   let dica = pergunta.explicacao || 'Pense com calma antes de responder.'
   if (correta) {
+   // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- entrada escapada por escapeRegExp() e vinda das alternativas do quiz, nao de input livre
     try { dica = dica.replace(new RegExp(escapeRegExp(correta), 'ig'), '▓▓▓▓▓') } catch {}
   }
   return dica
