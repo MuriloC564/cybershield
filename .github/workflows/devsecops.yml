@@ -1,0 +1,367 @@
+name: DevSecOps Pipeline
+
+on:
+  push:
+    branches: [main, 'teste-gate/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # ---------------------------------------------------------------- 1
+  secrets-scan:
+    name: 1 - Secrets (Gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Instalar Gitleaks (versão fixa)
+        run: |
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_linux_x64.tar.gz | tar xz gitleaks
+      - name: Gitleaks (histórico completo)
+        run: ./gitleaks detect --source . --redact --exit-code 1 --report-format json --report-path gitleaks.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: relatorio-01-gitleaks
+          path: gitleaks.json
+          if-no-files-found: warn
+
+  # ---------------------------------------------------------------- 2
+  sast:
+    name: 2 - SAST (Semgrep)
+    needs: secrets-scan
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep:1.75.0
+    steps:
+      - uses: actions/checkout@v4
+      - name: Semgrep
+        run: |
+          semgrep scan \
+            --config p/default --config p/owasp-top-ten \
+            --config p/python --config p/javascript \
+            --exclude node_modules --exclude frontend/public \
+            --json --output semgrep.json --error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: relatorio-02-semgrep
+          path: semgrep.json
+          if-no-files-found: warn
+
+  # ---------------------------------------------------------------- 3
+  build:
+    name: 3 - Build, dependências e artefato
+    needs: sast
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Frontend (Node)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Frontend - instalar e buildar
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+      - name: Frontend - árvore e auditoria
+        working-directory: frontend
+        run: |
+          npm ls --all > ../arvore-dependencias.txt || true
+          npm audit --json > ../npm-audit.json || true
+
+      # Backend (Python)
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Backend - instalar, checar sintaxe e auditar
+        run: |
+          pip install -r backend/requirements.txt
+          python -m compileall -q backend
+          pip list > arvore-python.txt
+          pip install pip-audit
+          pip-audit -r backend/requirements.txt --format json -o pip-audit.json || true
+
+      - name: Testes automatizados (se existirem)
+        run: |
+          echo "Sem suíte de testes no projeto; build + compileall funcionam como verificação mínima." | tee testes.txt
+
+      - name: Empacotar artefato (SHA do commit)
+        run: tar czf app-${{ github.sha }}.tar.gz frontend/dist backend
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: relatorio-03-build
+          path: |
+            arvore-dependencias.txt
+            arvore-python.txt
+            npm-audit.json
+            pip-audit.json
+            testes.txt
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        with:
+          name: artefato-aplicacao
+          path: app-${{ github.sha }}.tar.gz
+
+  # ---------------------------------------------------------------- 4
+  sca:
+    name: 4 - SCA (Trivy fs)
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trivy fs - relatório completo (tabela)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,misconfig,secret
+          skip-dirs: node_modules,frontend/public
+          format: table
+          output: trivy-fs.txt
+          exit-code: '0'
+      - name: Trivy fs - HIGH/CRITICAL (bloqueia)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,misconfig,secret
+          skip-dirs: node_modules,frontend/public
+          severity: HIGH,CRITICAL
+          format: json
+          output: trivy-fs.json
+          exit-code: '1'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: relatorio-04-trivy-sca
+          path: |
+            trivy-fs.txt
+            trivy-fs.json
+          if-no-files-found: warn
+
+  # ---------------------------------------------------------------- 5
+  docker-build:
+    name: 5 - Docker build + GHCR
+    needs: sca
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.nome.outputs.image }}
+      digest: ${{ steps.push.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Nome da imagem (minúsculas)
+        id: nome
+        run: echo "image=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build e push
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.nome.outputs.image }}:${{ github.sha }}
+      - name: Relatório
+        if: always()
+        run: |
+          {
+            echo "# Docker build"
+            echo "- Imagem: ${{ steps.nome.outputs.image }}:${{ github.sha }}"
+            echo "- Digest: ${{ steps.push.outputs.digest }}"
+            echo "- Commit: ${{ github.sha }}"
+          } > docker-build.md
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: relatorio-05-docker-build
+          path: docker-build.md
+
+  # ---------------------------------------------------------------- 6
+  image-scan:
+    name: 6 - Scan da imagem (Trivy)
+    needs: docker-build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    env:
+      TRIVY_USERNAME: ${{ github.actor }}
+      TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Trivy image - relatório completo (tabela)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ needs.docker-build.outputs.image }}:${{ github.sha }}
+          format: table
+          output: trivy-image.txt
+          exit-code: '0'
+      - name: Trivy image - HIGH/CRITICAL com correção (bloqueia)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ needs.docker-build.outputs.image }}:${{ github.sha }}
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          format: json
+          output: trivy-image.json
+          exit-code: '1'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: relatorio-06-trivy-image
+          path: |
+            trivy-image.txt
+            trivy-image.json
+          if-no-files-found: warn
+
+  # ---------------------------------------------------------------- 7
+  dast-staging:
+    name: 7 - Homologação + ZAP
+    needs: [docker-build, image-scan]
+    runs-on: ubuntu-latest
+    environment: homologacao
+    permissions:
+      contents: read
+      packages: read
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: homolog
+          POSTGRES_PASSWORD: homolog-temporario
+          POSTGRES_DB: cybershield
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U homolog"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Subir a imagem aprovada (homologação efêmera no runner)
+        run: |
+          JWT=$(openssl rand -hex 32)   # segredo descartável, só desta execução
+          docker run -d --name app --network host \
+            -e PORT=8080 \
+            -e DATABASE_URL="postgresql://homolog:homolog-temporario@localhost:5432/cybershield" \
+            -e DB_SSLMODE=disable \
+            -e JWT_SECRET_KEY="$JWT" \
+            ${{ needs.docker-build.outputs.image }}:${{ github.sha }}
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8080/health && break
+            sleep 2
+          done
+          curl -sf http://localhost:8080/health || (docker logs app; exit 1)
+      - name: Permissão de escrita para o ZAP
+        run: chmod -R a+w "$GITHUB_WORKSPACE"
+      - name: ZAP Baseline
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: http://localhost:8080
+          fail_action: false
+          allow_issue_writing: false
+          artifact_name: zap-bruto
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: relatorio-07-homologacao-zap
+          path: |
+            report_html.html
+            report_json.json
+            report_md.md
+          if-no-files-found: warn
+
+  # ---------------------------------------------------------------- 8
+  deploy-prod:
+    name: 8 - Aprovação + Produção
+    needs: [docker-build, dast-staging]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: producao        # Required reviewers pausam aqui
+    steps:
+      - name: "Deploy (exemplo - Render com imagem do GHCR, pelo SHA)"
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}   # Environment secret de "producao"
+          IMG: ${{ needs.docker-build.outputs.image }}:${{ github.sha }}
+        run: |
+          # Ajuste ao provedor escolhido. No Render, o hook de serviço baseado em imagem
+          # aceita o parâmetro imgURL (confirme na documentação atual).
+          ENC=$(python3 -c "import urllib.parse,os;print(urllib.parse.quote(os.environ['IMG'], safe=''))")
+          curl -fsS "${RENDER_DEPLOY_HOOK}&imgURL=${ENC}"
+      - name: Relatório
+        if: always()
+        run: |
+          {
+            echo "# Deploy em produção"
+            echo "- Imagem: ${{ needs.docker-build.outputs.image }}:${{ github.sha }}"
+            echo "- Digest: ${{ needs.docker-build.outputs.digest }}"
+            echo "- Disparado por: ${{ github.actor }}"
+            echo "- Data (UTC): $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "- Execução: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          } > deploy-producao.md
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: relatorio-08-producao
+          path: deploy-producao.md
+
+  # ---------------------------------------------------------------- ★
+  pipeline-summary:
+    name: ★ Resumo da Esteira
+    if: always()
+    needs: [secrets-scan, sast, build, sca, docker-build, image-scan, dast-staging, deploy-prod]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: relatorio-*
+          path: reports
+      - name: Montar resumo
+        run: |
+          n() { jq -r "$1" "$2" 2>/dev/null || echo "-"; }
+          G=$(n 'length' reports/relatorio-01-gitleaks/gitleaks.json)
+          S=$(n '.results|length' reports/relatorio-02-semgrep/semgrep.json)
+          A=$(n '.metadata.vulnerabilities.total' reports/relatorio-03-build/npm-audit.json)
+          P=$(n '[.dependencies[]?|select((.vulns|length)>0)]|length' reports/relatorio-03-build/pip-audit.json)
+          T4=$(n '[.Results[]?|.Vulnerabilities[]?]|length' reports/relatorio-04-trivy-sca/trivy-fs.json)
+          T6=$(n '[.Results[]?|.Vulnerabilities[]?]|length' reports/relatorio-06-trivy-image/trivy-image.json)
+          Z=$(n '[.site[]?.alerts[]?|select(.riskcode=="3")]|length' reports/relatorio-07-homologacao-zap/report_json.json)
+          {
+            echo "# Resumo da Esteira"
+            echo ""
+            echo "| # | Etapa | Resultado | Achados |"
+            echo "|---|-------|-----------|---------|"
+            echo "| 1 | Secrets (Gitleaks) | ${{ needs.secrets-scan.result }} | $G segredos |"
+            echo "| 2 | SAST (Semgrep) | ${{ needs.sast.result }} | $S achados |"
+            echo "| 3 | Build + dependências | ${{ needs.build.result }} | npm audit: $A / pip-audit: $P pacotes |"
+            echo "| 4 | SCA (Trivy fs) | ${{ needs.sca.result }} | $T4 HIGH/CRITICAL |"
+            echo "| 5 | Docker build + GHCR | ${{ needs.docker-build.result }} | - |"
+            echo "| 6 | Scan da imagem (Trivy) | ${{ needs.image-scan.result }} | $T6 HIGH/CRITICAL |"
+            echo "| 7 | Homologação + ZAP | ${{ needs.dast-staging.result }} | $Z alertas High |"
+            echo "| 8 | Aprovação + Produção | ${{ needs.deploy-prod.result }} | - |"
+          } > resumo-esteira.md
+          cat resumo-esteira.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: resumo-da-esteira
+          path: resumo-esteira.md

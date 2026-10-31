@@ -440,10 +440,6 @@ def dados_area_agregada(db: Session, usuario: Usuario, categoria: Categoria):
         "filhos": filhos,
     }
 
-@app.get("/")
-def inicio():
-    return {"app": "CyberShield API", "status": "online", "versao": "3.5"}
-
 @app.get("/health")
 def health():
     return {"status": "ok"}
@@ -717,3 +713,8 @@ def redefinir_senha(dados: RedefinirSenha, db: Session = Depends(get_db)):
     usuario.reset_token_expira_em = None
     db.commit()
     return {"mensagem": "Senha redefinida com sucesso."}
+
+from fastapi.staticfiles import StaticFiles
+
+if os.path.isdir("static"):
+    app.mount("/", StaticFiles(directory="static", html=True), name="frontend")

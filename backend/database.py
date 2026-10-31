@@ -25,7 +25,7 @@ connect_args = {}
 
 if DATABASE_URL.startswith("postgresql"):
     connect_args = {
-        "sslmode": "require"
+        "sslmode": os.getenv("DB_SSLMODE", "require")
     }
 
 

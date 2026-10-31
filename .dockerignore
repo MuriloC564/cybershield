@@ -1,0 +1,17 @@
+.git
+.github
+docs
+**/.env
+**/.env.*
+!**/.env.example
+**/node_modules
+**/dist
+**/__pycache__
+**/*.pyc
+**/venv
+**/.venv
+*.md
+backend/teste_ia.py
+backend/migrate*.py
+backend/seed_*.py
+backend/criar_tabelas.py

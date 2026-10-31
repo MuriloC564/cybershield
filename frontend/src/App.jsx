@@ -9,7 +9,7 @@ import {
   buscarLojaSkins, comprarSkinPersonagem, equiparSkinPersonagem, desequiparSkinPersonagem,
 } from './auth'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
 
 const ESTILOS_ALTERNATIVA = [
   { cor: 'vermelho', icone: '🛡️' },
