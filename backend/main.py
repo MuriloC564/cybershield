@@ -30,6 +30,26 @@ ORIGENS_PERMITIDAS = [
     "https://cybershield-liart.vercel.app",
 ]
 
+@app.middleware("http")
+async def cabecalhos_seguranca(request, call_next):
+    resposta = await call_next(request)
+    resposta.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "script-src 'self'; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+        "font-src 'self' https://fonts.gstatic.com data:; "
+        "img-src 'self' data:; "
+        "connect-src 'self'; "
+        "object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+    )
+    resposta.headers["X-Content-Type-Options"] = "nosniff"
+    resposta.headers["X-Frame-Options"] = "DENY"
+    resposta.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    resposta.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    resposta.headers["Cross-Origin-Opener-Policy"] = "same-origin"
+    resposta.headers["Cross-Origin-Resource-Policy"] = "same-origin"
+    return resposta
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ORIGENS_PERMITIDAS,
