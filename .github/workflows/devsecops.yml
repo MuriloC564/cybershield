@@ -3,6 +3,10 @@ name: DevSecOps Pipeline
 on:
   push:
     branches: [main, 'teste-gate/**']
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - '.gitignore'
   workflow_dispatch:
 
 permissions:
@@ -57,6 +61,20 @@ jobs:
     name: 3 - Build, dependências e artefato
     needs: sast
     runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: teste
+          POSTGRES_PASSWORD: teste-temporario
+          POSTGRES_DB: cybershield_teste
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U teste"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
@@ -87,9 +105,15 @@ jobs:
           pip install pip-audit
           pip-audit -r backend/requirements.txt --format json -o pip-audit.json || true
 
-      - name: Testes automatizados (se existirem)
+      - name: Testes automatizados (pytest, smoke)
+        working-directory: backend
+        env:
+          DATABASE_URL: postgresql://teste:teste-temporario@localhost:5432/cybershield_teste
+          DB_SSLMODE: disable
         run: |
-          echo "Sem suíte de testes no projeto; build + compileall funcionam como verificação mínima." | tee testes.txt
+          set -o pipefail
+          pip install -r requirements-dev.txt
+          python -m pytest -v --junitxml=../resultado-testes.xml 2>&1 | tee ../testes.txt
 
       - name: Empacotar artefato (SHA do commit)
         run: tar czf app-${{ github.sha }}.tar.gz frontend/dist backend
@@ -104,6 +128,7 @@ jobs:
             npm-audit.json
             pip-audit.json
             testes.txt
+            resultado-testes.xml
           if-no-files-found: warn
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -294,24 +319,35 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     environment: producao        # Required reviewers pausam aqui
+    env:
+      IMG: ${{ needs.docker-build.outputs.image }}:${{ github.sha }}
+      PROD_URL: https://cybershield-prod-n2em.onrender.com
     steps:
-      - name: "Deploy (exemplo - Render com imagem do GHCR, pelo SHA)"
+      - name: Disparar deploy no Render (imagem do GHCR pelo SHA)
         env:
-          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}   # Environment secret de "producao"
-          IMG: ${{ needs.docker-build.outputs.image }}:${{ github.sha }}
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
         run: |
-          # Ajuste ao provedor escolhido. No Render, o hook de serviço baseado em imagem
-          # aceita o parâmetro imgURL (confirme na documentação atual).
-          ENC=$(python3 -c "import urllib.parse,os;print(urllib.parse.quote(os.environ['IMG'], safe=''))")
-          curl -fsS "${RENDER_DEPLOY_HOOK}&imgURL=${ENC}"
+          set -euo pipefail
+          if [ -z "${RENDER_DEPLOY_HOOK}" ]; then
+            echo "::error::Secret RENDER_DEPLOY_HOOK não configurado no environment producao"
+            exit 1
+          fi
+          ENC=$(printf '%s' "$IMG" | jq -sRr @uri)
+          curl --fail --silent --show-error "${RENDER_DEPLOY_HOOK}&imgURL=${ENC}"
+      - name: Health check pós-deploy
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --retry 12 --retry-delay 15 --retry-all-errors "${PROD_URL}/health"
       - name: Relatório
         if: always()
         run: |
           {
             echo "# Deploy em produção"
-            echo "- Imagem: ${{ needs.docker-build.outputs.image }}:${{ github.sha }}"
+            echo "- Imagem: ${IMG}"
             echo "- Digest: ${{ needs.docker-build.outputs.digest }}"
-            echo "- Disparado por: ${{ github.actor }}"
+            echo "- Responsável pela execução: ${{ github.actor }}"
+            echo "- Resultado do job: ${{ job.status }}"
+            echo "- URL: ${PROD_URL}"
             echo "- Data (UTC): $(date -u +%Y-%m-%dT%H:%M:%SZ)"
             echo "- Execução: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           } > deploy-producao.md
