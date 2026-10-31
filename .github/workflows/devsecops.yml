@@ -271,25 +271,22 @@ jobs:
             sleep 2
           done
           curl -sf http://localhost:8080/health || (docker logs app; exit 1)
-      - name: Permissão de escrita para o ZAP
-        run: chmod -R a+w "$GITHUB_WORKSPACE"
-      - name: ZAP Baseline
-        uses: zaproxy/action-baseline@66042c8e7e24680119199a017e5b0e8603bf4dae # v0.12.0
-        with:
-          target: http://localhost:8080
-          fail_action: false
-          allow_issue_writing: false
-          artifact_name: zap-bruto
+              # ZAP: ghcr.io/zaproxy/zaproxy:stable em 31/10/2026, fixado por digest
+      - name: ZAP Baseline (Docker direto, informativo)
+        run: |
+          mkdir -p zap-out
+          chmod 777 zap-out
+          docker run --rm --network host \
+            -v "$PWD/zap-out:/zap/wrk:rw" \
+            ghcr.io/zaproxy/zaproxy@sha256:030d3df57735dacbb83464854758e674dd9ad01d79d12a129a8e58b1fd384238 \
+            zap-baseline.py -t http://localhost:8080 \
+            -r report_html.html -J report_json.json -w report_md.md -I
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: relatorio-07-homologacao-zap
-          path: |
-            report_html.html
-            report_json.json
-            report_md.md
+          path: zap-out/
           if-no-files-found: warn
-
   # ---------------------------------------------------------------- 8
   deploy-prod:
     name: 8 - Aprovação + Produção
